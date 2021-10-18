@@ -1,0 +1,54 @@
+
+header {
+    display:block;
+    height: 10vh;
+    border: 1px solid black;
+}
+.maincontainer {
+    display: flex;
+    height: 70vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+main {
+    display: flex;
+    border: 4px solid black;
+    width: 50%;
+    height: 50vh;
+    margin: auto;
+    min-width: 400px;
+}
+.logincontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid green;
+    width: 50%;
+}
+#logintitle {
+    margin: 2%;
+}
+form div {
+    margin: 2%;
+}
+#buttonbox {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+.buttonholder {
+    flex: 1 1 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.textholder {
+    flex: 1 1 30%;
+}
+.demobutton {
+    flex: 1;
+    min-width: 120px;
+}
