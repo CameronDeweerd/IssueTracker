@@ -1,0 +1,64 @@
+
+header {
+    display:block;
+    height: 10vh;
+    border: 1px solid black;
+}
+.maincontainer {
+    display: flex;
+    height: 70vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+main {
+    display: flex;
+    border: 4px solid black;
+    width:fit-content;
+    height: 50vh;
+    margin: auto;
+    min-width: 400px;
+    justify-content: space-evenly;
+    flex-basis:auto;
+}
+.logincontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid green;
+    flex: 1;
+    margin: 2%;
+    border-radius: 5%;
+}
+.formtitle {
+    margin: 2%;
+    text-align: center;
+}
+form div {
+    margin: 2%;
+}
+#buttonbox {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+.buttonholder {
+    flex: 1 1 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.textholder {
+    flex: 1 1 30%;
+    display: flex;
+}
+.textholder > input {
+    flex: 1 1;
+    min-width: 150px;
+}
+.demobutton {
+    flex: 1;
+    min-width: 120px;
+}

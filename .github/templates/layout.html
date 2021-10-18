@@ -1,0 +1,20 @@
+<!-- Turns out that the layout extensions {% block %} only work when using django/flask/etc. so this isn't implemented yet -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+    <header>Insert Bootstrap navbar here</header>
+
+    { block main %}{% endblock %}
+</body>
+
+</html>
