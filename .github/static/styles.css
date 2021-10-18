@@ -26,9 +26,12 @@ main {
     justify-content: center;
     border: 2px solid green;
     width: 50%;
-}
-#logintitle {
     margin: 2%;
+    border-radius: 5%;
+}
+.formtitle {
+    margin: 2%;
+    text-align: center;
 }
 form div {
     margin: 2%;
@@ -47,6 +50,11 @@ form div {
 }
 .textholder {
     flex: 1 1 30%;
+    display: flex;
+}
+.textholder > input {
+    flex: 1 1;
+    min-width: 150px;
 }
 .demobutton {
     flex: 1;
