@@ -14,10 +14,12 @@ header {
 main {
     display: flex;
     border: 4px solid black;
-    width: 50%;
+    width:fit-content;
     height: 50vh;
     margin: auto;
     min-width: 400px;
+    justify-content: space-evenly;
+    flex-basis:auto;
 }
 .logincontainer {
     display: flex;
@@ -25,7 +27,7 @@ main {
     align-items: center;
     justify-content: center;
     border: 2px solid green;
-    width: 50%;
+    flex: 1;
     margin: 2%;
     border-radius: 5%;
 }
