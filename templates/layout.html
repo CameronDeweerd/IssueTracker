@@ -1,5 +1,3 @@
-<!-- Turns out that the layout extensions {% block %} only work when using django/flask/etc. so this isn't implemented yet -->
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,7 +12,7 @@
 <body>
     <header>Insert Bootstrap navbar here</header>
 
-    { block main %}{% endblock %}
+    {% block main %}{% endblock %}
 </body>
 
 </html>
