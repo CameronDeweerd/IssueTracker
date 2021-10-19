@@ -1,11 +1,11 @@
 from flask import render_template, Blueprint, redirect, request, session
-from flask_session import Session
-from tempfile import mkdtemp
-from helpers import login_required
+# from flask_session import Session
+# from tempfile import mkdtemp
+from .helpers import login_required
 
 
 
-issueTrack = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates')
+issueTrack = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates', static_folder='static')
 
 
 @issueTrack.route('/')

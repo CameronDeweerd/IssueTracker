@@ -1,11 +1,11 @@
 from flask import Flask
 app = Flask(__name__)
 
-from issueTrackerViews import issueTrack
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import apology
-
+# The . makes these "relative imports" which is important to make them work on the server but technically doesn't matter here.
+from .helpers import apology
+from .issueTrackerViews import issueTrack
 
 app.register_blueprint(issueTrack)
 
