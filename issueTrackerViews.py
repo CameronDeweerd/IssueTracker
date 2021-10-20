@@ -56,6 +56,8 @@ def index():
     else:
         return render_template("login.html")
 
+# I think there is a way to do this in a general sense rather than individually
+
 @issueTrack.route('/register')
 def register():
     return render_template("register.html")
@@ -63,3 +65,23 @@ def register():
 @issueTrack.route('/roles')
 def roles():
     return render_template('roles.html')
+
+@issueTrack.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+@issueTrack.route('/projectusers')
+def projectusers():
+    return render_template('projectusers.html')
+
+@issueTrack.route('/mytickets')
+def mytickets():
+    return render_template('mytickets.html')
+
+@issueTrack.route('/myprojects')
+def myprojects():
+    return render_template('myprojects.html')
+
+@issueTrack.route('/profile')
+def profile():
+    return render_template('profile.html')
