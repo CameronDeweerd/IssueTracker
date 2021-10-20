@@ -1,6 +1,7 @@
 from flask import Flask, session
 from flask_session import Session
 from tempfile import mkdtemp
+import sqlite3
 app = Flask(__name__)
 
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
@@ -11,6 +12,7 @@ from issueTrackerViews import issueTrack
 
 app.register_blueprint(issueTrack)
 # Some of these leading sections were taken directly from CS50's PSET9 source code
+# todo doublecheck that all things wrt filesystem don't cause problems
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
@@ -27,6 +29,14 @@ app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+# Connect to database todo don't know if checksamethread=false is bad practice
+connection = sqlite3.connect("./static/IssueTracker.db", check_same_thread=False)
+db = connection.cursor()
+# do queries like this:
+#var = db.execute("SELECT * FROM Tablename")
+#var = var.fetchall()
+
 
 @app.errorhandler(404)
 def page_not_found(e):
