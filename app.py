@@ -1,13 +1,12 @@
 from flask import Flask, session
 from flask_session import Session
 from tempfile import mkdtemp
-import sqlite3
 app = Flask(__name__)
 
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 # The . makes these "relative imports" which is important to make them work on the server but technically doesn't matter here.
-from helpers import apology
+from helpers import apology, login_required
 from issueTrackerViews import issueTrack
 
 app.register_blueprint(issueTrack)
@@ -30,12 +29,6 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# Connect to database todo don't know if checksamethread=false is bad practice
-connection = sqlite3.connect("./static/IssueTracker.db", check_same_thread=False)
-db = connection.cursor()
-# do queries like this:
-#var = db.execute("SELECT * FROM Tablename")
-#var = var.fetchall()
 
 
 @app.errorhandler(404)
