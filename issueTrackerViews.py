@@ -52,10 +52,14 @@ def index():
         # Redirect user to home page
         # todo we don't have this yet
         # return redirect("/homepage")
-        return render_template("login.html")
+        return render_template("roles.html")
     else:
         return render_template("login.html")
 
 @issueTrack.route('/register')
 def register():
     return render_template("register.html")
+
+@issueTrack.route('/roles')
+def roles():
+    return render_template('roles.html')

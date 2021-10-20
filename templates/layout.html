@@ -16,74 +16,74 @@
 {% set test = True %}
 
 <body>
-<!--Flexbox header bar-->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+  <!--Flexbox header bar-->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
         {#{% if session.user_id %}#}
         {% if test %}
-          <ul class="navbar-nav mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="./">User Profile</a></li>
-            <li class="nav-item"><a class="nav-link" href="./">LogOut</a></li>
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="./">User Profile</a></li>
+          <li class="nav-item"><a class="nav-link" href="./">LogOut</a></li>
+        </ul>
+        {% else %}
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="./">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="./register">Register</a></li>
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!--Flexbox sidebar-->
+  <div class="container-fluid">
+    <div class="row flex-nowrap  justify-content-center">
+      {#{% if session.user_id %}#}
+      {% if test %}
+      <div class="navbar col-2 navbar-light bg-dark">
+        <!--            I don't know what most of these classes do since I pasted them. will need to check them out later-->
+        <div class="d-flex flex-column align-items-top align-items-sm-start px-3 pt-2 text-white">
+          <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+            <li class="nav-item">
+              <a href="#" class="nav-link align-middle px-0">
+                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="./roles" class="nav-link align-middle px-0">
+                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Role Assignment</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link align-middle px-0">
+                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Assign Project Users</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link align-middle px-0">
+                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">My Projects</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link align-middle px-0">
+                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">My Tickets</span>
+              </a>
+            </li>
           </ul>
-          {% else %}
-          <ul class="navbar-nav mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="./">Login</a></li>
-            <li class="nav-item"><a class="nav-link" href="./register">Register</a></li>
-          </ul>
-          {% endif %}
         </div>
       </div>
-    </nav>
-
-<!--Flexbox sidebar-->
-<div class="container-fluid">
-    <div class="row flex-nowrap  justify-content-center">
-        {#{% if session.user_id %}#}
-        {% if test %}
-        <div class="navbar col-2 navbar-light bg-dark">
-<!--            I don't know what most of these classes do since I pasted them. will need to check them out later-->
-            <div class="d-flex flex-column align-items-top align-items-sm-start px-3 pt-2 text-white">
-                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Role Assignment</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Assign Project Users</span>
-                        </a>
-                    </li>
-                                      <li class="nav-item">
-                        <a href="#" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">My Projects</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">My Tickets</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        {% endif %}
-        <div class="col-10 justify-center">
+      {% endif %}
+      <div class="col-10 justify-center">
         {% block main %}{% endblock %}
-        </div>
+      </div>
     </div>
-</div>
+  </div>
 
 </body>
 
