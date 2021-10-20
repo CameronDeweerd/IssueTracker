@@ -1,7 +1,7 @@
 from flask import render_template, Blueprint, redirect, request, session
 # from flask_session import Session
 # from tempfile import mkdtemp
-from .helpers import login_required
+from helpers import login_required
 
 
 
