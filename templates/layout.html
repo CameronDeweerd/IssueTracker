@@ -24,9 +24,13 @@
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
+      {% if session.user_id %}
+        <div>
+          Welcome {{ session.user_id }}
+        </div>
+      {% endif %}
       <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-        {#{% if session.user_id %}#}
-        {% if test %}
+        {% if session.user_id %}
         <ul class="navbar-nav mb-2 mb-lg-0">
           <li class="nav-item"><a class="nav-link" href="./profile">User Profile</a></li>
 <!--          TODO need to add in a logout function-->
@@ -45,8 +49,7 @@
   <!--Flexbox sidebar-->
   <div class="container-fluid">
     <div class="row flex-nowrap  justify-content-center">
-      {#{% if session.user_id %}#}
-      {% if test %}
+      {% if session.user_id %}
       <div class="navbar col-2 navbar-light bg-dark">
         <!--            I don't know what most of these classes do since I pasted them. will need to check them out later-->
         <div class="d-flex flex-column align-items-top align-items-sm-start px-3 pt-2 text-white">

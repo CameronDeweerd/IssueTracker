@@ -34,6 +34,15 @@ def index():
     session.clear()
     if request.method == "POST":
 
+        # Check if Demo account
+        if request.form.get("admin"):
+            session["user_id"] = "testadmin"
+            return render_template('dashboard.html')
+        elif request.form.get("user"):
+            session["user_id"] = "testuser"
+            return render_template('dashboard.html')
+        # todo add the other two when they might matter
+
         # Ensure username was submitted
         if not request.form.get("username"):
             return apology("Must provide username")
@@ -43,7 +52,7 @@ def index():
         # Check database for username
         rows = db.execute("SELECT * FROM Users WHERE Username = ?", (request.form.get("username"),))
         rows = rows.fetchall()
-        print(rows)
+        # print(rows)
         if len(rows) !=1 or not rows[0]["Password"] == request.form.get("password"):
             return apology("Invalid Username and/or Password")
         # Remember which user has logged in
@@ -51,8 +60,7 @@ def index():
 
         # Redirect user to home page
         # todo we don't have this yet
-        # return redirect("/homepage")
-        return render_template("roles.html")
+        return redirect("/dashboard")
     else:
         return render_template("login.html")
 
