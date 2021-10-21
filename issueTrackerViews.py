@@ -59,7 +59,6 @@ def index():
         session["user_id"] = rows[0]["Username"]
 
         # Redirect user to home page
-        # todo we don't have this yet
         return redirect("/dashboard")
     else:
         return render_template("login.html")
@@ -70,9 +69,29 @@ def index():
 def register():
     return render_template("register.html")
 
-@issueTrack.route('/roles')
+@issueTrack.route('/roles', methods=['GET', 'POST'])
 def roles():
-    return render_template('roles.html')
+    if request.method == "POST":
+        db.execute("UPDATE Users SET Access = ? WHERE Username = ?", (request.form.get("roleselect"), request.form.get("userselect")))
+        return redirect('/roles')
+    else:
+        # Determine access level of current user
+        accesslevel = db.execute("SELECT Access FROM Users WHERE Username = ?", (session['user_id'],))
+        accesslevel = accesslevel.fetchall()
+        accesslevel = accesslevel[0]["Access"]
+        useraccess = [{'Username': session['user_id'], 'Access': accesslevel}]
+        allowroles = [{'Type': accesslevel}]
+        # Determine which users they're allowed to edit
+        if accesslevel == "admin":
+            # Admin level gets to edit all users
+            useraccess = db.execute("SELECT Username, Access FROM Users ORDER BY Access, Username")
+            useraccess = useraccess.fetchall()
+            # Admin level gets to assign any role to a user
+            allowroles = db.execute("SELECT Type FROM Access")
+            allowroles = allowroles.fetchall()
+        # User level does not get to edit anyone
+
+        return render_template('roles.html', useraccess=useraccess, allowroles=allowroles)
 
 @issueTrack.route('/dashboard')
 def dashboard():
