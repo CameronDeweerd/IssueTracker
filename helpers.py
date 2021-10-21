@@ -33,3 +33,35 @@ def login_required(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
+
+
+# This function helps convert list of tuple output of sql query into list of dictionaries output
+# Taken from https://stackoverflow.com/questions/3300464/how-can-i-get-dict-from-sqlite-query
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+
+# Helper function for SQL execution when returns are needed
+def return_query(connection, query):
+    cursor = connection.cursor()
+    try:
+        result = cursor.execute(query)
+        return result
+    except Exception as err:
+        print(f"Error: '{err}'")
+    cursor.close()
+
+
+# Helper function for SQL execution when returns are unneeded
+def execute_query(connection, query, options):
+    cursor = connection.cursor()
+    try:
+        cursor.execute(query, options)
+        connection.commit()
+        # print("Query successful")
+    except Exception as err:
+        print(f"Error: '{err}'")
+    cursor.close()
