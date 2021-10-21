@@ -12,9 +12,6 @@
   <title>{% block title %}{% endblock %}</title>
 </head>
 
-<!-- this variable controls if we're logged in or not until we get sessions setup-->
-{% set test = True %}
-
 <body>
   <!--Flexbox header bar-->
   <nav class="navbar navbar-expand-lg navbar-light bg-light" id="headerNav">
@@ -50,8 +47,8 @@
   <div class="container-fluid">
     <div class="row flex-nowrap  justify-content-center">
       {% if session.user_id %}
-      <nav class="navbar col-2 navbar-light bg-dark" id="sideNav">
-        <!--       TODO     I don't know what most of these classes do since I pasted them. will need to check them out later-->
+      <div class="navbar col-2 navbar-light bg-dark align-items-start" id="sideNav">
+        <!--      TODO      I don't know what most of these classes do since I pasted them. will need to check them out later-->
         <div class="d-flex flex-column align-items-top align-items-sm-start px-3 pt-2 text-white">
           <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
             <li class="nav-item">

@@ -8,6 +8,19 @@ Role Assignment
 <div class="container bg-secondary mt-sm-1">
     <div class='justify-content-center align-items-center'>
         <p class='h1'>Roles</p>
+        <form action="/roles" method='post'>
+            <select class='formselect' aria-label='User select' name="userselect" id="userselect">
+                {% for user in useraccess %}
+                <option value="{{ user.Username }}">{{ user.Username}} - {{ user.Access }}</option>
+                {% endfor %}
+            </select>
+            <select class='formselect' name="roleselect" id="roleselect">
+                {% for role in allowroles %}
+                <option value="{{ role.Type }}">{{ role.Type }}</option>
+                {% endfor %}
+            </select>
+            <button type='submit'>Change Role</button>
+        </form>
     </div>
 </div>
 {% endblock %}
