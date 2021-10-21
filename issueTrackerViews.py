@@ -1,8 +1,8 @@
-from flask import render_template, Blueprint, redirect, request, session
-# from flask_session import Session
-# from tempfile import mkdtemp
+from flask import render_template, Blueprint, redirect, request, session, abort
+from jinja2 import TemplateNotFound
 import sqlite3
-from helpers import apology, login_required
+from helpers import apology, login_required, dict_factory, execute_query, return_query
+from datetime import datetime
 
 
 
@@ -10,30 +10,19 @@ from helpers import apology, login_required
 # This one will work for local testing
 issueTrack = Blueprint('issueTrack', __name__, url_prefix='/', template_folder='templates', static_folder='static')
 
-# This function helps convert list of tuple output of sql query into list of dictionaries output
-# Taken from https://stackoverflow.com/questions/3300464/how-can-i-get-dict-from-sqlite-query
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
 
 
 # Connect to database todo don't know if checksamethread=false is bad practice
 connection = sqlite3.connect("./static/IssueTracker.db", check_same_thread=False)
 connection.row_factory = dict_factory
-db = connection.cursor()
 # do queries like this:
-var = db.execute("SELECT * FROM Access")
+var = return_query(connection, "SELECT * FROM Access")
 var = var.fetchall()
 print(var)
 
 @issueTrack.route('/', methods=['GET', 'POST'])
 def index():
-    # Forget user_id
-    session.clear()
     if request.method == "POST":
-
         # Check if Demo account
         if request.form.get("admin"):
             session["user_id"] = "testadmin"
@@ -50,7 +39,7 @@ def index():
         elif not request.form.get("password"):
             return apology("must provide password")
         # Check database for username
-        rows = db.execute("SELECT * FROM Users WHERE Username = ?", (request.form.get("username"),))
+        rows = return_query(connection, "SELECT * FROM Users WHERE Username = ?", (request.form.get("username"),))
         rows = rows.fetchall()
         # print(rows)
         if len(rows) !=1 or not rows[0]["Password"] == request.form.get("password"):
@@ -64,32 +53,72 @@ def index():
     else:
         return render_template("login.html")
 
-# I think there is a way to do this in a general sense rather than individually
 
-@issueTrack.route('/register')
-def register():
-    return render_template("register.html")
+# will look for a specific route first and if it doesn't find it then it will use this
+@issueTrack.route('/<page>')
+def show(page):
+    try:
+        return render_template(f'{page}.html')
+    except TemplateNotFound:
+        abort(404)
 
-@issueTrack.route('/roles')
-def roles():
-    return render_template('roles.html')
 
-@issueTrack.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html')
+@issueTrack.route('/logout')
+def logout():
+    # Forget user_id
+    session.clear()
+    return redirect("/login")
 
-@issueTrack.route('/projectusers')
-def projectusers():
-    return render_template('projectusers.html')
+@issueTrack.route('/submitticket', methods=['GET', 'POST'])
+def submit():
+    if request.method == "POST":
+        '''form validation'''
+        # Ensure category was selected
+        if not request.form.get("category"):
+            # TODO check values against DB categories
+            return apology("invalid category")
+        # Ensure subject was submitted
+        elif not request.form.get("subject"):
+            return apology("Please provide a subject")
+        # Ensure description submitted
+        elif not request.form.get("description"):
+            return apology("Please provide a Description")
 
-@issueTrack.route('/mytickets')
-def mytickets():
-    return render_template('mytickets.html')
+        ''' add to DB '''
+        query = "INSERT INTO Issues \
+                   (issue_category, issue_subject, issue_description, submitter_id, date_created, issue_status) \
+                   VALUES (?, ?, ?, ?, ?, 'unassigned')"
+        parameters = (request.form.get("category"),
+                      request.form.get("subject"),
+                      request.form.get("description"),
+                      session["user_id"],
+                      datetime.now().date())
+        execute_query(connection, query, parameters)
+        return redirect("/mytickets")
+    else:
+        return render_template('submitticket.html')
 
-@issueTrack.route('/myprojects')
-def myprojects():
-    return render_template('myprojects.html')
 
-@issueTrack.route('/profile')
-def profile():
-    return render_template('profile.html')
+# @issueTrack.route('/dashboard')
+# def dashboard():
+#     return render_template('dashboard.html')
+#
+# @issueTrack.route('/projectusers')
+# def projectusers():
+#     return render_template('projectusers.html')
+#
+# @issueTrack.route('/mytickets')
+# def mytickets():
+#     return render_template('mytickets.html')
+#
+# @issueTrack.route('/myprojects')
+# def myprojects():
+#     return render_template('myprojects.html')
+#
+# @issueTrack.route('/profile')
+# def profile():
+#     return render_template('profile.html')
+#
+# @issueTrack.route('/profile')
+# def profile():
+#     return render_template('profile.html')
