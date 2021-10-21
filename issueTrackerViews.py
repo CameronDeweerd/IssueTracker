@@ -69,10 +69,10 @@ def index():
 def register():
     return render_template("register.html")
 
-@issueTrack.route('/roles')
+@issueTrack.route('/roles', methods=['GET', 'POST'])
 def roles():
     if request.method == "POST":
-        db.execute("UPDATE Users SET Access = ? WHERE Username = ?", ())
+        db.execute("UPDATE Users SET Access = ? WHERE Username = ?", (request.form.get("roleselect"), request.form.get("userselect")))
         return redirect('/roles')
     else:
         # Determine access level of current user
