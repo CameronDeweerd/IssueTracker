@@ -8,7 +8,36 @@ My Tickets
 <div class="container bg-secondary mt-sm-1">
     <div class='justify-content-center align-items-center'>
         <p class='h1'>My Tickets</p>
-
     </div>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr class='table-dark'>
+                <th>ID</th>
+                <th>Category</th>
+                <th>Subject</th>
+                <th>Description</th>
+                <th>Submitted By</th>
+                <th>Date Created</th>
+                <th>Status</th>
+                <th>Date Closed</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in tickets %}
+            <tr>
+                <td>{{ i.id }}</td>
+                <td>{{ i.issue_category }}</td>
+                <td>{{ i.issue_subject }}</td>
+                <td>{{ i.issue_description }}</td>
+                <td>{{ i.submitter_id }}</td>
+                <td>{{ i.date_created }}</td>
+                <td>{{ i.issue_status }}</td>
+                <td>{{ i['Date Closed'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
 </div>
 {% endblock %}
