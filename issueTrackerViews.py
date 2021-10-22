@@ -5,11 +5,9 @@ from helpers import apology, login_required, dict_factory, execute_query, return
 from datetime import datetime
 
 
-
-#issueTrack = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates', static_folder='static')
+# issueTrack = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates', static_folder='static')
 # This one will work for local testing
 issueTrack = Blueprint('issueTrack', __name__, url_prefix='/', template_folder='templates', static_folder='static')
-
 
 
 # Connect to database todo don't know if checksamethread=false is bad practice
@@ -64,11 +62,11 @@ def show(page):
 @issueTrack.route('/roles', methods=['GET', 'POST'])
 def roles():
     if request.method == "POST":
-        db.execute("UPDATE Users SET Access = ? WHERE Username = ?", (request.form.get("roleselect"), request.form.get("userselect")))
+        execute_query(connection, "UPDATE Users SET Access = ? WHERE Username = ?", (request.form.get("roleselect"), request.form.get("userselect")))
         return redirect('/roles')
     else:
         # Determine access level of current user
-        accesslevel = db.execute("SELECT Access FROM Users WHERE Username = ?", (session['user_id'],))
+        accesslevel = return_query(connection, "SELECT Access FROM Users WHERE Username = ?", (session['user_id'],))
         accesslevel = accesslevel.fetchall()
         accesslevel = accesslevel[0]["Access"]
         useraccess = [{'Username': session['user_id'], 'Access': accesslevel}]
@@ -76,10 +74,10 @@ def roles():
         # Determine which users they're allowed to edit
         if accesslevel == "admin":
             # Admin level gets to edit all users
-            useraccess = db.execute("SELECT Username, Access FROM Users ORDER BY Access, Username")
+            useraccess = return_query(connection, "SELECT Username, Access FROM Users ORDER BY Access, Username")
             useraccess = useraccess.fetchall()
             # Admin level gets to assign any role to a user
-            allowroles = db.execute("SELECT Type FROM Access")
+            allowroles = return_query(connection, "SELECT Type FROM Access")
             allowroles = allowroles.fetchall()
         # User level does not get to edit anyone
 
@@ -129,10 +127,12 @@ def submit():
 # def projectusers():
 #     return render_template('projectusers.html')
 #
-# @issueTrack.route('/mytickets')
-# def mytickets():
-#     return render_template('mytickets.html')
-#
+@issueTrack.route('/mytickets')
+def mytickets():
+    tickets = return_query(connection, "SELECT * FROM Issues WHERE [People Assigned] = ?", (session['user_id'],))
+    tickets = tickets.fetchall()
+    return render_template('mytickets.html', tickets=tickets)
+
 # @issueTrack.route('/myprojects')
 # def myprojects():
 #     return render_template('myprojects.html')
