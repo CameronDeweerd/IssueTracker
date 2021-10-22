@@ -45,10 +45,13 @@ def dict_factory(cursor, row):
 
 
 # Helper function for SQL execution when returns are needed
-def return_query(connection, query):
+def return_query(connection, query, options=[]):
     cursor = connection.cursor()
     try:
-        result = cursor.execute(query)
+        if len(options) == 0:
+            result = cursor.execute(query)
+        else:
+            result = cursor.execute(query, options)
         return result
     except Exception as err:
         print(f"Error: '{err}'")
@@ -56,10 +59,13 @@ def return_query(connection, query):
 
 
 # Helper function for SQL execution when returns are unneeded
-def execute_query(connection, query, options):
+def execute_query(connection, query, options=[]):
     cursor = connection.cursor()
     try:
-        cursor.execute(query, options)
+        if len(options) == 0:
+            cursor.execute(query)
+        else:
+            cursor.execute(query, options)
         connection.commit()
         # print("Query successful")
     except Exception as err:
