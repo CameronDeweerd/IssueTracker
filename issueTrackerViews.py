@@ -1,7 +1,8 @@
 from flask import render_template, Blueprint, redirect, request, session, abort
 from jinja2 import TemplateNotFound
 import sqlite3
-from helpers import apology, login_required, dict_factory, execute_query, return_query
+from helpers import apology, login_required
+from SQLhelpers import dict_factory, execute_query, return_query, check_permission
 from datetime import datetime
 
 
@@ -10,13 +11,12 @@ from datetime import datetime
 issueTrack = Blueprint('issueTrack', __name__, url_prefix='/', template_folder='templates', static_folder='static')
 
 
-# Connect to database todo don't know if checksamethread=false is bad practice
-connection = sqlite3.connect("./static/IssueTracker.db", check_same_thread=False)
-connection.row_factory = dict_factory
+
 # do queries like this:
-var = return_query(connection, "SELECT * FROM Access")
-var = var.fetchall()
-print(var)
+# var = return_query("SELECT * FROM Access")
+# var = var.fetchall()
+# print(var)
+
 
 @issueTrack.route('/', methods=['GET', 'POST'])
 def index():
@@ -37,7 +37,7 @@ def index():
         elif not request.form.get("password"):
             return apology("must provide password")
         # Check database for username
-        rows = return_query(connection, "SELECT * FROM Users WHERE Username = ?", (request.form.get("username"),))
+        rows = return_query("SELECT * FROM Users WHERE Username = ?", (request.form.get("username"),))
         rows = rows.fetchall()
         # print(rows)
         if len(rows) !=1 or not rows[0]["Password"] == request.form.get("password"):
@@ -59,14 +59,16 @@ def show(page):
     except TemplateNotFound:
         abort(404)
 
+
 @issueTrack.route('/roles', methods=['GET', 'POST'])
 def roles():
     if request.method == "POST":
-        execute_query(connection, "UPDATE Users SET Access = ? WHERE Username = ?", (request.form.get("roleselect"), request.form.get("userselect")))
+        execute_query("UPDATE Users SET Access = ? WHERE Username = ?", (request.form.get("roleselect"), request.form.get("userselect")))
         return redirect('/roles')
     else:
+        # TODO change this up to use the SQLhelper function and database permission value
         # Determine access level of current user
-        accesslevel = return_query(connection, "SELECT Access FROM Users WHERE Username = ?", (session['user_id'],))
+        accesslevel = return_query("SELECT Access FROM Users WHERE Username = ?", (session['user_id'],))
         accesslevel = accesslevel.fetchall()
         accesslevel = accesslevel[0]["Access"]
         useraccess = [{'Username': session['user_id'], 'Access': accesslevel}]
@@ -74,20 +76,22 @@ def roles():
         # Determine which users they're allowed to edit
         if accesslevel == "admin":
             # Admin level gets to edit all users
-            useraccess = return_query(connection, "SELECT Username, Access FROM Users ORDER BY Access, Username")
+            useraccess = return_query("SELECT Username, Access FROM Users ORDER BY Access, Username")
             useraccess = useraccess.fetchall()
             # Admin level gets to assign any role to a user
-            allowroles = return_query(connection, "SELECT Type FROM Access")
+            allowroles = return_query("SELECT Type FROM Access")
             allowroles = allowroles.fetchall()
         # User level does not get to edit anyone
 
         return render_template('roles.html', useraccess=useraccess, allowroles=allowroles)
+
 
 @issueTrack.route('/logout')
 def logout():
     # Forget user_id
     session.clear()
     return redirect("/login")
+
 
 @issueTrack.route('/submitticket', methods=['GET', 'POST'])
 def submit():
@@ -113,7 +117,7 @@ def submit():
                       request.form.get("description"),
                       session["user_id"],
                       datetime.now().date())
-        execute_query(connection, query, parameters)
+        execute_query(query, parameters)
         return redirect("/mytickets")
     else:
         return render_template('submitticket.html')
@@ -129,7 +133,13 @@ def submit():
 #
 @issueTrack.route('/mytickets')
 def mytickets():
-    tickets = return_query(connection, "SELECT * FROM Issues WHERE [People Assigned] = ?", (session['user_id'],))
+    # check to see if user should view all
+    if check_permission('FullAccess'):
+        tickets = return_query("SELECT * FROM Issues")
+        print("access")
+    else:
+        print("no access")
+        tickets = return_query("SELECT * FROM Issues WHERE [People Assigned] = ?", (session['user_id'],))
     tickets = tickets.fetchall()
     return render_template('mytickets.html', tickets=tickets)
 
