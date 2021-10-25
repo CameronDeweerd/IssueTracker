@@ -5,7 +5,7 @@ My Tickets
 {% endblock %}
 
 {% block main %}
-<div class="container bg-secondary mt-sm-1">
+<div class="bg-secondary mt-sm-1">
     <div class='justify-content-center align-items-center'>
         <p class='h1'>My Tickets</p>
     </div>
@@ -20,12 +20,13 @@ My Tickets
                 <th>Date Created</th>
                 <th>Status</th>
                 <th>Date Closed</th>
+                <th>Update Ticket</th>
             </tr>
         </thead>
         <tbody>
             {% for i in tickets %}
-            <tr>
-                <td>{{ i.id }}</td>
+            <tr id="ticket_{{i.id}}">
+                <td>{{ i.issue_id }}</td>
                 <td>{{ i.issue_category }}</td>
                 <td>{{ i.issue_subject }}</td>
                 <td>{{ i.issue_description }}</td>
@@ -33,6 +34,7 @@ My Tickets
                 <td>{{ i.date_created }}</td>
                 <td>{{ i.issue_status }}</td>
                 <td>{{ i['Date Closed'] }}</td>
+                <td><button onclick="window.location.href='/mytickets?id={{i.issue_id}}'">Update</button></td>
             </tr>
             {% endfor %}
         </tbody>

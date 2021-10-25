@@ -1,16 +1,14 @@
 from flask import render_template, Blueprint, redirect, request, session, abort
 from jinja2 import TemplateNotFound
-import sqlite3
 from helpers import apology, login_required
-from SQLhelpers import dict_factory, execute_query, return_query, check_permission
+from SQLhelpers import execute_query, return_query, check_permission
 from datetime import datetime
+import prepareChartData
 
 
 # issueTrack = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates', static_folder='static')
 # This one will work for local testing
 issueTrack = Blueprint('issueTrack', __name__, url_prefix='/', template_folder='templates', static_folder='static')
-
-
 
 # do queries like this:
 # var = return_query("SELECT * FROM Access")
@@ -118,30 +116,48 @@ def submit():
                       session["user_id"],
                       datetime.now().date())
         execute_query(query, parameters)
+
+        ''' add "created ticket" activity to DB'''
+        newTicketID = return_query("SELECT issue_id FROM Issues ORDER BY issue_id DESC LIMIT 1").fetchall()
+        query = "INSERT INTO Activity \
+                           (issue_id, user_id, activity_date, activity_description) \
+                           VALUES (?, ?, ?, 'Ticket Created')"
+        parameters = (newTicketID[0]['issue_id'],
+                      session["user_id"],
+                      datetime.now().date())
+        execute_query(query, parameters)
+
         return redirect("/mytickets")
     else:
         return render_template('submitticket.html')
 
 
-# @issueTrack.route('/dashboard')
-# def dashboard():
-#     return render_template('dashboard.html')
-#
+@issueTrack.route('/dashboard')
+def dashboard():
+    # TODO return various different chart data depending on the user access level
+    return render_template('dashboard.html')
+
+
 # @issueTrack.route('/projectusers')
 # def projectusers():
 #     return render_template('projectusers.html')
 #
 @issueTrack.route('/mytickets')
 def mytickets():
-    # check to see if user should view all
-    if check_permission('FullAccess'):
-        tickets = return_query("SELECT * FROM Issues")
-        print("access")
+    if not request.args.get('id'):
+        # check to see if user has access to all tickets or should just display assigned
+        if check_permission('FullAccess'):
+            tickets = return_query("SELECT * FROM Issues")
+        else:
+            tickets = return_query("SELECT * FROM Issues WHERE [People Assigned] = ?", (session['user_id'],))
+        tickets = tickets.fetchall()
+        return render_template('mytickets.html', tickets=tickets)
     else:
-        print("no access")
-        tickets = return_query("SELECT * FROM Issues WHERE [People Assigned] = ?", (session['user_id'],))
-    tickets = tickets.fetchall()
-    return render_template('mytickets.html', tickets=tickets)
+        print(request.args.get('id'))
+        # TODO check if user is admin or assigned to ticket
+        # TODO check if ticket is actually in the DB
+        activities = return_query("SELECT * FROM Activities WHERE id = ?", request.args.get('id'))
+        return render_template('ticketupdate.html', activities=activities)
 
 # @issueTrack.route('/myprojects')
 # def myprojects():
