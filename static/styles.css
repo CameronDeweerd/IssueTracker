@@ -4,6 +4,10 @@ header {
     height: 10vh;
     border: 1px solid black;
 }
+
+body {
+    height:vh-100;
+}
 .maincontainer {
     display: flex;
     height: 70vh;
@@ -61,4 +65,42 @@ form div {
 .demobutton {
     flex: 1;
     min-width: 120px;
+}
+
+.chart-flex-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 100%;
+    flex-grow:1;
+    }
+
+.chart-container {
+    position: relative;
+    margin: auto;
+    border: 2px solid black;
+    width: 100%;
+    max-width: 40vw;
+    min-height: 40vh;
+    max-height: 90vh;
+    margin: 5px;
+}
+
+#main-and-sidenav-container {
+    min-height:90vh;
+    justify-content:center;
+    background-color: #dee2e6;
+
+}
+
+#navbar-sidenav{
+
+}
+
+
+#navbar-header{
+    height:10vh;
 }

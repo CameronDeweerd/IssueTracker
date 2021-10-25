@@ -5,14 +5,23 @@ Dashboard
 {% endblock %}
 
 {% block main %}
-<div class="container bg-secondary mt-sm-1">
-    <div class='justify-content-center align-items-center'>
-        <canvas id="myChart1" width="100" height="100"></canvas>
-        <canvas id="myChart2" width="100" height="100"></canvas>
-        <canvas id="myChart3" width="100" height="100"></canvas>
-        <canvas id="myChart4" width="100" height="100"></canvas>
+<div class="chart-flex-container">
+    <div class='chart-container' >
+        <canvas class='chart' id="myChart1"></canvas>
+    </div>
+    <div class='chart-container' >
+        <canvas class='chart' id="myChart2"></canvas>
+    </div>
+    <div class='chart-container' >
+        <canvas class='chart' id="myChart3"></canvas>
+    </div>
+    <div class='chart-container' >
+        <canvas class='chart' id="myChart4"></canvas>
     </div>
 </div>
+
+
+
 
 {% endblock %}
 
@@ -26,17 +35,9 @@ Dashboard
 <!--Chart1-->
 <script>
 var ctx1 = document.getElementById('myChart1').getContext('2d');
-  ctx1.canvas.width  = window.innerWidth/4;
-  ctx1.canvas.height = window.innerHeight/4;
 var ctx2 = document.getElementById('myChart2').getContext('2d');
-  ctx2.canvas.width  = window.innerWidth/4;
-  ctx2.canvas.height = window.innerHeight/4;
 var ctx3 = document.getElementById('myChart3').getContext('2d');
-  ctx3.canvas.width  = window.innerWidth/4;
-  ctx3.canvas.height = window.innerHeight/4;
 var ctx4 = document.getElementById('myChart4').getContext('2d');
-  ctx4.canvas.width  = window.innerWidth/4;
-  ctx4.canvas.height = window.innerHeight/4;
 
 var chartData1 = {
     type: 'bar',
@@ -69,7 +70,10 @@ var chartData1 = {
             y: {
                 beginAtZero: true
             }
-        }
+        },
+        aspectRatio: 1,
+        responsive: true,
+        maintainAspectRatio: false,
     }
 };
 var myChart1 = new Chart(ctx1, chartData1);
@@ -78,3 +82,6 @@ var myChart3 = new Chart(ctx3, chartData1);
 var myChart4 = new Chart(ctx4, chartData1);
 </script>
 {% endblock %}
+
+<!--TODO hook the onbefore print event for autoresizing-->
+<!--https://www.chartjs.org/docs/2.7.2/general/responsive.html#important-note-->

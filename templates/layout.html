@@ -12,9 +12,9 @@
   <title>{% block title %}{% endblock %}</title>
 </head>
 
-<body>
+<body >
   <!--Flexbox header bar-->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light" id="headerNav">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light" id="navbar-header">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Navbar</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -44,10 +44,10 @@
   </nav>
 
   <!--Flexbox sidebar-->
-  <div class="container-fluid">
-    <div class="row flex-nowrap">
+  <div class="container-fluid vh-auto">
+    <div class="row" id="main-and-sidenav-container">
       {% if session.user_id %}
-      <div class="navbar col-2 navbar-light bg-dark align-items-start justify-content-start" id="sideNav">
+      <div class="navbar col-2 navbar-light bg-dark align-items-start justify-content-start" id="navbar-side">
         <!--      TODO      I don't know what most of these classes do since I pasted them. will need to check them out later-->
         <div class="d-flex flex-column align-items-top align-items-sm-start px-3 pt-2 text-white">
           <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
@@ -85,7 +85,7 @@
         </div>
       </div>
       {% endif %}
-      <div class="col-10 justify-center">
+      <div class="col-10 justify-center" id="main-content-box">
         {% block main %}{% endblock %}
       </div>
     </div>
