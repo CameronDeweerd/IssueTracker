@@ -67,6 +67,10 @@ form div {
     min-width: 120px;
 }
 
+.form-group {
+    flex-grow:1;
+}
+
 .chart-flex-container {
     display: flex;
     flex-direction: row;
@@ -103,4 +107,9 @@ form div {
 
 #navbar-header{
     height:10vh;
+}
+
+textarea {
+    width:100%;
+
 }

@@ -1,17 +1,88 @@
 {% extends "layout.html" %}
 
 {% block title %}
-TITLE GOES HERE
+Ticket #{{ticketData.issue_id}}
 {% endblock %}
 
 {% block main %}
-<div class="bg-secondary mt-sm-1">
+<div>
     <div class='justify-content-center align-items-center'>
-        <p class='h1'>TICKET NUMBER GOES HERE</p>
+        <p class='h1' id="ticketHeading">Ticket #{{ticketData.issue_id}}</p>
     </div>
+    <div>
+        <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Subject</th>
+                <th>Description</th>
+                <th>Submitted By</th>
+                <th>Date Created</th>
+                <th>Date Closed</th>
+                <th>Assigned To</th>
+                <th>Status</th>
 
-    <div>FORM to update new activity or change status goes here</div>
-    <div>TABLE OF PAST ACTIVITIES GOES HERE</div>
+            </tr>
+        </thead>
+        <tbody>
+            <tr id="ticket_{{ticketData.id}}">
+                <td>{{ ticketData.issue_category }}</td>
+                <td>{{ ticketData.issue_subject }}</td>
+                <td>{{ ticketData.issue_description }}</td>
+                <td>{{ ticketData.submitter_id }}</td>
+                <td>{{ ticketData.date_created }}</td>
+                <td>{{ ticketData.date_closed }}</td>
+                <td>{{ ticketData['People Assigned'] }}</td>
+                <td>{{ ticketData.issue_status }}</td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+    <div>
+        <h2>New Activity</h2>
+        <form class="chart-flex-container" method='post'>
+            <div class="form-group">
+                <p>Description of change: </p>
+                <p><textarea name="description" rows="3"></textarea></p>
+            </div>
+            <div class="form-group">
+                <div>
+                Change Status: <select id="status" name="status">
+                  <option value="" selected></option>
+                    {% for i in statusOptions %}
+                  <option value="{{i.Type}}">{{i.Type}}</option>
+                    {% endfor %}
+                </select>
+                </div>
+                <div>
+                <button class="btn btn-primary" type="submit">Submit Activity</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+        <h2>History</h2>
+            <table class="table table-striped table-hover" id='table1'>
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Activity ID</th>
+                <th onclick='sortTable(1)'>Description</th>
+                <th onclick='sortTable(2)'>User</th>
+                <th onclick='sortTable(3)'>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in activityData %}
+            <tr id="ticket_{{i.id}}">
+                <td>{{ i.activity_id }}</td>
+                <td>{{ i.activity_description }}</td>
+                <td>{{ i.user_id }}</td>
+                <td>{{ i.activity_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
 
 
 </div>

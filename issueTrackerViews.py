@@ -121,10 +121,11 @@ def submit():
         newTicketID = return_query("SELECT issue_id FROM Issues ORDER BY issue_id DESC LIMIT 1").fetchall()
         query = "INSERT INTO Activity \
                            (issue_id, user_id, activity_date, activity_description) \
-                           VALUES (?, ?, ?, 'Ticket Created')"
+                           VALUES (?, ?, ?, ?)"
         parameters = (newTicketID[0]['issue_id'],
                       session["user_id"],
-                      datetime.now().date())
+                      datetime.now().date(),
+                      'Ticket Created')
         execute_query(query, parameters)
 
         return redirect("/mytickets")
@@ -142,22 +143,68 @@ def dashboard():
 # def projectusers():
 #     return render_template('projectusers.html')
 #
-@issueTrack.route('/mytickets')
+@issueTrack.route('/mytickets', methods=['GET', 'POST'])
 def mytickets():
     if not request.args.get('id'):
-        # check to see if user has access to all tickets or should just display assigned
-        if check_permission('FullAccess'):
-            tickets = return_query("SELECT * FROM Issues")
-        else:
-            tickets = return_query("SELECT * FROM Issues WHERE [People Assigned] = ?", (session['user_id'],))
-        tickets = tickets.fetchall()
-        return render_template('mytickets.html', tickets=tickets)
+            '''This will bring us to all the tickets the user has available'''
+            # check to see if user has access to all tickets or should just display assigned
+            if check_permission('FullAccess'):
+                tickets = return_query("SELECT * FROM Issues")
+            else:
+                tickets = return_query("SELECT * FROM Issues WHERE [People Assigned] = ?", (session['user_id'],))
+            tickets = tickets.fetchall()
+            return render_template('mytickets.html', tickets=tickets)
     else:
-        print(request.args.get('id'))
-        # TODO check if user is admin or assigned to ticket
-        # TODO check if ticket is actually in the DB
-        activities = return_query("SELECT * FROM Activities WHERE id = ?", request.args.get('id'))
-        return render_template('ticketupdate.html', activities=activities)
+        if request.method == "GET":
+            '''This will bring us to a specific ticket'''
+            # TODO check if user is admin or assigned to ticket
+            # TODO check if ticket is actually in the DB
+            ticketData = return_query("SELECT * FROM Issues WHERE issue_id = ?", request.args.get('id')).fetchall()
+            activityData = return_query("SELECT * FROM Activity WHERE issue_id = ?", request.args.get('id')).fetchall()
+            activityData.reverse()
+            statusOptions = return_query("SELECT * FROM Status").fetchall()
+            return render_template('ticketupdate.html', activityData=activityData, ticketData=ticketData[0], statusOptions=statusOptions)
+        elif request.method == "POST":
+            '''This is triggered when activity is submitted on a specific ticket'''
+            '''add the new activity into the DB'''
+            # TODO check if user has permissions
+            description = request.form.get("description")
+            status = request.form.get("status")
+            if description and not status == "Closed":     # Update the activity log
+                query = "INSERT INTO Activity \
+                                   (issue_id, user_id, activity_date, activity_description) \
+                                   VALUES (?, ?, ?, ?)"
+                parameters = (request.args.get('id'),
+                              session["user_id"],
+                              datetime.now().date(),
+                              request.form.get("description"))
+                execute_query(query, parameters)
+            if status:          # if the status was changed then update the activity log and issues page
+                # Add a new activity
+                query = "INSERT INTO Activity \
+                                   (issue_id, user_id, activity_date, activity_description) \
+                                   VALUES (?, ?, ?, ?)"
+                parameters = (request.args.get('id'),
+                              session["user_id"],
+                              datetime.now().date(),
+                              f'Status changed to {status}')
+                execute_query(query, parameters)
+
+                # update the issue status
+                query = f"UPDATE Issues SET issue_status= ? WHERE issue_id = ?"
+                parameters = (status,
+                              request.args.get('id'))
+                execute_query(query, parameters)
+
+                # include the closing date if needed
+                if status == "Closed":
+                    query = f"UPDATE Issues SET date_closed = ? WHERE issue_id = ?"
+                    parameters = (datetime.now().date(),
+                                  request.args.get('id'))
+                    execute_query(query, parameters)
+            redirectLink = f'/mytickets?id={request.args.get("id")}'
+            print(redirect)
+            return redirect(redirectLink)
 
 # @issueTrack.route('/myprojects')
 # def myprojects():
