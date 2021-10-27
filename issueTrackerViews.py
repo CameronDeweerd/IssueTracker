@@ -36,7 +36,7 @@ def index():
             return apology("must provide password")
         # Check database for username
         rows = return_query("SELECT * FROM Users WHERE Username = ?", (request.form.get("username"),))
-        rows = rows.fetchall()
+        # rows = rows.fetchall()
         # print(rows)
         if len(rows) !=1 or not rows[0]["Password"] == request.form.get("password"):
             return apology("Invalid Username and/or Password")
@@ -67,7 +67,7 @@ def roles():
         # TODO change this up to use the SQLhelper function and database permission value
         # Determine access level of current user
         accesslevel = return_query("SELECT Access FROM Users WHERE Username = ?", (session['user_id'],))
-        accesslevel = accesslevel.fetchall()
+        # accesslevel = accesslevel.fetchall()
         accesslevel = accesslevel[0]["Access"]
         useraccess = [{'Username': session['user_id'], 'Access': accesslevel}]
         allowroles = [{'Type': accesslevel}]
@@ -78,7 +78,7 @@ def roles():
             useraccess = useraccess.fetchall()
             # Admin level gets to assign any role to a user
             allowroles = return_query("SELECT Type FROM Access")
-            allowroles = allowroles.fetchall()
+            # allowroles = allowroles.fetchall()
         # User level does not get to edit anyone
 
         return render_template('roles.html', useraccess=useraccess, allowroles=allowroles)
@@ -118,7 +118,7 @@ def submit():
         execute_query(query, parameters)
 
         ''' add "created ticket" activity to DB'''
-        newTicketID = return_query("SELECT issue_id FROM Issues ORDER BY issue_id DESC LIMIT 1").fetchall()
+        newTicketID = return_query("SELECT issue_id FROM Issues ORDER BY issue_id DESC LIMIT 1")  # .fetchall()
         query = "INSERT INTO Activity \
                            (issue_id, user_id, activity_date, activity_description) \
                            VALUES (?, ?, ?, 'Ticket Created')"
@@ -148,16 +148,19 @@ def mytickets():
         # check to see if user has access to all tickets or should just display assigned
         if check_permission('FullAccess'):
             tickets = return_query("SELECT * FROM Issues")
+            return render_template('alltickets.html', tickets=tickets)
         else:
             tickets = return_query("SELECT * FROM Issues WHERE [People Assigned] = ?", (session['user_id'],))
-        tickets = tickets.fetchall()
-        return render_template('mytickets.html', tickets=tickets)
+            # tickets = tickets.fetchall()
+            return render_template('mytickets.html', tickets=tickets)
     else:
         print(request.args.get('id'))
         # TODO check if user is admin or assigned to ticket
         # TODO check if ticket is actually in the DB
         activities = return_query("SELECT * FROM Activities WHERE id = ?", request.args.get('id'))
         return render_template('ticketupdate.html', activities=activities)
+
+
 
 # @issueTrack.route('/myprojects')
 # def myprojects():
