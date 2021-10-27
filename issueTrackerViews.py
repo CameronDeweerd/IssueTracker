@@ -148,11 +148,10 @@ def mytickets():
         # check to see if user has access to all tickets or should just display assigned
         if check_permission('FullAccess'):
             tickets = return_query("SELECT * FROM Issues")
-            return render_template('alltickets.html', tickets=tickets)
         else:
             tickets = return_query("SELECT * FROM Issues WHERE [People Assigned] = ?", (session['user_id'],))
-            # tickets = tickets.fetchall()
-            return render_template('mytickets.html', tickets=tickets)
+        # tickets = tickets.fetchall()
+        return render_template('mytickets.html', tickets=tickets)
     else:
         print(request.args.get('id'))
         # TODO check if user is admin or assigned to ticket
@@ -160,8 +159,17 @@ def mytickets():
         activities = return_query("SELECT * FROM Activities WHERE id = ?", request.args.get('id'))
         return render_template('ticketupdate.html', activities=activities)
 
-
-
+@issueTrack.route('/assigntickets')
+def assigntickets():
+    if not request.args.get('id'):
+        if check_permission('FullAccess'):
+            tickets = return_query("SELECT * FROM Issues WHERE issue_status = ?", ("unassigned",))
+            return render_template("alltickets.html", tickets=tickets)
+        else:
+            return redirect("/mytickets")
+    else:
+        # Todo something with this button
+        return redirect("/assigntickets")
 # @issueTrack.route('/myprojects')
 # def myprojects():
 #     return render_template('myprojects.html')

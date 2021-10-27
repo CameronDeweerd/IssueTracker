@@ -16,11 +16,11 @@ All Tickets
                 <th onclick='sortTable(1)'>Category</th>
                 <th onclick='sortTable(2)'>Subject</th>
                 <th onclick='sortTable(3)'>Description</th>
-                <th onclick='sortTable(4)'>Assigned To</th>
-                <th onclick='sortTable(5)'>Submitted By</th>
-                <th onclick='sortTable(6)'>Date Created</th>
-                <th onclick='sortTable(7)'>Status</th>
-                <th onclick='sortTable(8)'>Date Closed</th>
+                <th onclick='sortTable(4)'>Submitted By</th>
+                <th onclick='sortTable(5)'>Date Created</th>
+                <th onclick='sortTable(6)'>Status</th>
+                <th onclick='sortTable(7)'>Date Closed</th>
+                <th>Assign Ticket</th>
             </tr>
         </thead>
         <tbody>
@@ -30,11 +30,11 @@ All Tickets
                 <td>{{ i.issue_category }}</td>
                 <td>{{ i.issue_subject }}</td>
                 <td>{{ i.issue_description }}</td>
-                <td>{{ i['People Assigned'] }}</td>
                 <td>{{ i.submitter_id }}</td>
                 <td>{{ i.date_created }}</td>
                 <td>{{ i.issue_status }}</td>
                 <td>{{ i['Date Closed'] }}</td>
+                <td><button onclick="window.location.href='/assigntickets?id={{i.issue_id}}'">Assign</button></td>
             </tr>
             {% endfor %}
         </tbody>

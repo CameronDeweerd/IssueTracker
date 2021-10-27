@@ -55,6 +55,5 @@ def return_query(query, options=[]):
 
 def check_permission(permission):
     value = return_query("SELECT * FROM Access WHERE Type = (SELECT Access FROM Users WHERE Username = ?)", (session['user_id'],))
-    print(value)
     # value = value.fetchall()[0]
     return value[0][permission] == 1
