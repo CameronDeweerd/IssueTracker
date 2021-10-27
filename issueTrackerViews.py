@@ -153,14 +153,6 @@ def mytickets():
             tickets = return_query("SELECT * FROM Issues WHERE [People Assigned] = ?", (session['user_id'],))
         # tickets = tickets.fetchall()
         return render_template('mytickets.html', tickets=tickets)
-            '''This will bring us to all the tickets the user has available'''
-            # check to see if user has access to all tickets or should just display assigned
-            if check_permission('FullAccess'):
-                tickets = return_query("SELECT * FROM Issues")
-            else:
-                tickets = return_query("SELECT * FROM Issues WHERE [People Assigned] = ?", (session['user_id'],))
-            tickets = tickets.fetchall()
-            return render_template('mytickets.html', tickets=tickets)
     else:
         if request.method == "GET":
             '''This will bring us to a specific ticket'''
