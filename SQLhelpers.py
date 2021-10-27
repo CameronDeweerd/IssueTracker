@@ -45,6 +45,7 @@ def return_query(query, options=[]):
             result = cursor.execute(query)
         else:
             result = cursor.execute(query, options)
+        result = result.fetchall()
         return result
     except Exception as err:
         print(f"Error: '{err}'")
@@ -54,5 +55,5 @@ def return_query(query, options=[]):
 
 def check_permission(permission):
     value = return_query("SELECT * FROM Access WHERE Type = (SELECT Access FROM Users WHERE Username = ?)", (session['user_id'],))
-    value = value.fetchall()[0]
-    return value[permission] == 1
+    # value = value.fetchall()[0]
+    return value[0][permission] == 1
