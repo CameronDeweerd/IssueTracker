@@ -1,7 +1,7 @@
 from flask import render_template, Blueprint, redirect, request, session, abort
 from jinja2 import TemplateNotFound
-from .helpers import apology, login_required
-from .SQLhelpers import execute_query, return_query, check_permission
+from helpers import apology, login_required
+from SQLhelpers import execute_query, return_query, check_permission
 from datetime import datetime
 import prepareChartData
 
@@ -57,6 +57,7 @@ def show(page):
 
 
 @issueTrack.route('/roles', methods=['GET', 'POST'])
+@login_required
 def roles():
     if request.method == "POST":
         execute_query("UPDATE Users SET Access = ? WHERE Username = ?", (request.form.get("roleselect"), request.form.get("userselect")))
@@ -87,6 +88,7 @@ def logout():
 
 
 @issueTrack.route('/submitticket', methods=['GET', 'POST'])
+@login_required
 def submit():
     if request.method == "POST":
         '''form validation'''
@@ -129,6 +131,7 @@ def submit():
 
 
 @issueTrack.route('/dashboard')
+@login_required
 def dashboard():
     # TODO return various different chart data depending on the user access level
     return render_template('dashboard.html')
@@ -139,6 +142,7 @@ def dashboard():
 #     return render_template('projectusers.html')
 #
 @issueTrack.route('/mytickets', methods=['GET', 'POST'])
+@login_required
 def mytickets():
     if not request.args.get('id'):
         # check to see if user has access to all tickets or should just display assigned
@@ -201,6 +205,7 @@ def mytickets():
 
 
 @issueTrack.route('/assigntickets')
+@login_required
 def assigntickets():
     if not request.args.get('id'):
         if check_permission('FullAccess'):
