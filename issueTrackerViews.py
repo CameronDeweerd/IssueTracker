@@ -1,12 +1,12 @@
 from flask import render_template, Blueprint, redirect, request, session, abort
 from jinja2 import TemplateNotFound
-from helpers import apology, login_required
-from SQLhelpers import execute_query, return_query, check_permission
+from .helpers import apology, login_required
+from .SQLhelpers import execute_query, return_query, check_permission
 from datetime import datetime
 import prepareChartData
 
 
-# issueTrack = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates', static_folder='static')
+issueTrackWeb = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates', static_folder='static')
 # This one will work for local testing
 issueTrack = Blueprint('issueTrack', __name__, url_prefix='/', template_folder='templates', static_folder='static')
 
@@ -199,6 +199,7 @@ def mytickets():
             print(redirect)
             return redirect(redirectLink)
 
+
 @issueTrack.route('/assigntickets')
 def assigntickets():
     if not request.args.get('id'):
@@ -221,3 +222,10 @@ def assigntickets():
 # @issueTrack.route('/profile')
 # def profile():
 #     return render_template('profile.html')
+
+
+@issueTrack.errorhandler(404)
+def page_not_found(e):
+    # note that we set the 404 status explicitly
+    return apology(e.name, e.code)
+    issueTrack.register_error_handler(404, page_not_found)
