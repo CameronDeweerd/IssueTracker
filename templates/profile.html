@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Register
+{% endblock %}
+
+{% block main %}
+<div class='container'>
+    <div><strong>Username: </strong>{{ username }}</div>
+    <div><strong>Access Level: </strong>{{ access }}</div>
+    <div class='w-25'>
+        <table class='table table-light table-striped'>
+            <tr>
+                <th>Permission</th>
+                <th>Yes/No</th>
+            </tr>
+            {% for key, value in permissions.items() %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>
+                    {% if value == 1 %}
+                    Yes
+                    {% else %}
+                    No
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+{% endblock%}
