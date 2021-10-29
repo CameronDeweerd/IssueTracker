@@ -1,28 +1,42 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Portfolio
+Register
 {% endblock %}
 
 {% block main %}
-    <div class='maincontainer'>
-        <main>
-            <div class='logincontainer'>
-                <div class='formtitle'>
-                    Register New Account
-                </div>
-                <form action="" method='post'>
-                    <div class='textholder'>
-                        <input type="text" placeholder='Username' autocomplete='off'>
-                    </div>
-                    <div class='textholder'>
-                        <input type="password" placeholder='Password'>
-                    </div>
-                    <div class='buttonholder'>
-                        <button type='submit'>Log In</button>
-                    </div>
-                </form>
+<div class='maincontainer'>
+    <main>
+        <div class='logincontainer'>
+            <div class='formtitle'>
+                Register New Account
             </div>
-        </main>
-    </div>
+            <form action="" method='post'>
+                <div class='textholder'>
+                    <label for="usernameEntry"></label>
+                    <input type="text" placeholder='Username' autocomplete='off' name='usernameEntry' autofocus>
+                </div>
+                <div class='textholder'>
+                    <label for="passwordEntry"></label>
+                    <input type="password" placeholder='Password' name='passwordEntry'>
+                </div>
+                <div class='textholder'>
+                    <label for="confirmPasswordEntry"></label>
+                    <input type="password" placeholder='Confirm Password' name='confirmPasswordEntry'>
+                </div>
+                <div class='buttonholder'>
+                    <button type='submit'>Register</button>
+                </div>
+            </form>
+            {% if warning %}
+            <div class='alert alert-warning alert-dismissible fade show' role='alert'>
+                {{ warning }}
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</div>
 {% endblock %}
+{% block script %}
+{% endblock%}
