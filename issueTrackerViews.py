@@ -3,6 +3,7 @@ from jinja2 import TemplateNotFound
 from helpers import apology, login_required
 from SQLhelpers import execute_query, return_query, check_permission
 from datetime import datetime
+from werkzeug.security import check_password_hash, generate_password_hash
 import prepareChartData
 
 
@@ -36,7 +37,7 @@ def index():
         # Check database for username
         rows = return_query("SELECT * FROM Users WHERE Username = ?", (request.form.get("username"),))
         # print(rows)
-        if len(rows) !=1 or not rows[0]["Password"] == request.form.get("password"):
+        if len(rows) != 1 or not rows[0]["Password"] == request.form.get("password"):
             return apology("Invalid Username and/or Password")
         # Remember which user has logged in
         session["user_id"] = rows[0]["Username"]
@@ -45,6 +46,37 @@ def index():
         return redirect("/dashboard")
     else:
         return render_template("login.html")
+
+@issueTrack.route('/register', methods=['GET', 'POST'])
+def register():
+    # Forget any user_id
+    session.clear()
+
+    if request.method == "POST":
+        # Ensure username was submitted
+        if not request.form.get("usernameEntry"):
+            warning = "Please enter username"
+            return render_template("register.html", warning=warning)
+        # Ensure password was submitted
+        if not request.form.get("passwordEntry"):
+            warning = "Please enter password"
+            return render_template("register.html", warning=warning)
+        # Ensure password was confirmed
+        if request.form.get("confirmPasswordEntry") != request.form.get("passwordEntry"):
+            warning = "Please ensure passwords match"
+            return render_template("register.html", warning=warning)
+        # Check if username in use
+        inuse = return_query("SELECT Username FROM Users WHERE Username = ?", request.form.get("usernameEntry",))
+        if inuse:
+            warning = "Username is in use already, please try again"
+            return render_template("register.html", warning=warning)
+        # If all else is good
+        execute_query("INSERT INTO Users (Username, Password, Access) Values (?, ?, ?)", (request.form.get("usernameEntry"), generate_password_hash(request.form.get("passwordEntry")), "submitter"))
+        return redirect("/")
+    else:
+        return render_template("register.html")
+
+
 
 
 # will look for a specific route first and if it doesn't find it then it will use this
