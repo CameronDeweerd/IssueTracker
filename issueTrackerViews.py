@@ -47,6 +47,7 @@ def index():
     else:
         return render_template("login.html")
 
+
 @issueTrack.route('/register', methods=['GET', 'POST'])
 def register():
     # Forget any user_id
@@ -250,9 +251,15 @@ def assigntickets():
 # def myprojects():
 #     return render_template('myprojects.html')
 #
-# @issueTrack.route('/profile')
-# def profile():
-#     return render_template('profile.html')
+@issueTrack.route('/profile')
+def profile():
+    username = session['user_id']
+    access = return_query("SELECT Access FROM Users WHERE Username = ?", (username,))
+    access = access[0]["Access"]
+    permissions = return_query("SELECT * FROM Access WHERE Type = ?", (access,))
+    permissions = permissions[0]
+    permissions.pop("Type")
+    return render_template('profile.html', username=username, access=access, permissions=permissions)
 
 
 @issueTrack.errorhandler(404)
