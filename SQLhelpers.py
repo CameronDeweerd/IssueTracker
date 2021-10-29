@@ -55,5 +55,9 @@ def return_query(query, options=[]):
 
 def check_permission(permission):
     value = return_query("SELECT * FROM Access WHERE Type = (SELECT Access FROM Users WHERE Username = ?)", (session['user_id'],))
-    # value = value.fetchall()[0]
-    return value[0][permission] == 1
+    try:
+        result = value[0][permission] == 1
+        return result
+    except KeyError:
+        print(permission + "does not exist")
+    return False

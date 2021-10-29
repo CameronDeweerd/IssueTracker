@@ -134,7 +134,8 @@ def submit():
 @login_required
 def dashboard():
     # TODO return various different chart data depending on the user access level
-    return render_template('dashboard.html')
+    chart2 = prepareChartData.myTicketStatus(session["user_id"])
+    return render_template('dashboard.html', testvar="`test`", chart2JSON=chart2)
 
 
 # @issueTrack.route('/projectusers')
