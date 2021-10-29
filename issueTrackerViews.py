@@ -37,7 +37,7 @@ def index():
         # Check database for username
         rows = return_query("SELECT * FROM Users WHERE Username = ?", (request.form.get("username"),))
         # print(rows)
-        if len(rows) != 1 or not rows[0]["Password"] == request.form.get("password"):
+        if len(rows) != 1 or not check_password_hash(rows[0]["Password"], request.form.get("password")):
             return apology("Invalid Username and/or Password")
         # Remember which user has logged in
         session["user_id"] = rows[0]["Username"]
@@ -75,8 +75,6 @@ def register():
         return redirect("/")
     else:
         return render_template("register.html")
-
-
 
 
 # will look for a specific route first and if it doesn't find it then it will use this
@@ -251,10 +249,6 @@ def assigntickets():
 # @issueTrack.route('/myprojects')
 # def myprojects():
 #     return render_template('myprojects.html')
-#
-# @issueTrack.route('/profile')
-# def profile():
-#     return render_template('profile.html')
 #
 # @issueTrack.route('/profile')
 # def profile():
