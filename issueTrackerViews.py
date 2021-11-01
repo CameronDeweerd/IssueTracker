@@ -6,7 +6,6 @@ from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 import prepareChartData
 
-
 issueTrackWeb = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates', static_folder='static')
 # This one will work for local testing
 issueTrack = Blueprint('issueTrack', __name__, url_prefix='/', template_folder='templates', static_folder='static')
@@ -22,10 +21,10 @@ def index():
         # Check if Demo account
         if request.form.get("admin"):
             session["user_id"] = "testadmin"
-            return render_template('dashboard.html')
+            return redirect("/dashboard")
         elif request.form.get("user"):
             session["user_id"] = "testuser"
-            return render_template('dashboard.html')
+            return redirect("/dashboard")
         # todo add the other two when they might matter
 
         # Ensure username was submitted
@@ -166,7 +165,7 @@ def submit():
 def dashboard():
     # TODO return various different chart data depending on the user access level
     chart2 = prepareChartData.myTicketStatus(session["user_id"])
-    return render_template('dashboard.html', testvar="`test`", chart2JSON=chart2)
+    return render_template('dashboard.html', chart2JSON=chart2)
 
 
 # @issueTrack.route('/projectusers')
@@ -248,6 +247,7 @@ def assigntickets():
     else:
         # Todo something with this button
         return redirect("/assigntickets")
+
 # @issueTrack.route('/myprojects')
 # def myprojects():
 #     return render_template('myprojects.html')

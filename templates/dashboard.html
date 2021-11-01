@@ -35,65 +35,10 @@ var ctx2 = document.getElementById('myChart2').getContext('2d');
 var ctx3 = document.getElementById('myChart3').getContext('2d');
 var ctx4 = document.getElementById('myChart4').getContext('2d');
 
-
-var chartData2 = {
-    'type': 'doughnut',
-    'data': {
-        'labels': ['unassigned', 'Open', 'Closed', 'On Hold', 'In Progress'],
-        'datasets': [{
-            'label': ['unassigned', 'Open', 'Closed', 'On Hold', 'In Progress'],
-            'data': [4, 0, 1, 0, 0],
-            'backgroundColor': ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)'],
-            'borderColor': ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
-            'borderWidth': 1
-        }]
-    },
-    options: {
-        'aspectRatio': 1,
-        'responsive': 1,
-        'maintainAspectRatio': 0,
-    }
-};
-
-var chartData1 = {
-    'type': 'bar',
-    'data': {
-        labels: [12, 19, 3, 5, 2, 3],
-        datasets: [{
-            label: [12, 19, 3, 5, 2, 3],
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-                ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        'aspectRatio': 1,
-        'responsive': 1,
-        'maintainAspectRatio': 0,
-    }
-};
-var chartData3 = {{testvar}};
-var chartData4 = {{chart2JSON|safe}};
-
-var myTicketStatus = new Chart(ctx1, chartData1);
-var myChart2 = new Chart(ctx2, chartData2);
-var myChart3 = new Chart(ctx3, chartData1);
-var myChart4 = new Chart(ctx4, chartData4);
+var myTicketStatus = new Chart(ctx1, {{chart2JSON|safe}});
+var myChart2 = new Chart(ctx2, {{chart2JSON|safe}});
+var myChart3 = new Chart(ctx3, {{chart2JSON|safe}});
+var myChart4 = new Chart(ctx4, {{chart2JSON|safe}});
 </script>
 {% endblock %}
 
