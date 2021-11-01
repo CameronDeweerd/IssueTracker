@@ -28,16 +28,38 @@ Dashboard
         crossorigin="anonymous" referrerpolicy="no-referrer">
 </script>
 
-<!--Chart1-->
+
+
 <script>
 var ctx1 = document.getElementById('myTicketStatus').getContext('2d');
 var ctx2 = document.getElementById('myChart2').getContext('2d');
 var ctx3 = document.getElementById('myChart3').getContext('2d');
 var ctx4 = document.getElementById('myChart4').getContext('2d');
 
-var myTicketStatus = new Chart(ctx1, {{chart2JSON|safe}});
+testData = {
+    type: 'bar',
+    data: {
+      labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+      datasets: [
+        {
+          label: "Population (millions)",
+          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+          data: [2478,5267,734,784,433]
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: 'Predicted world population (millions) in 2050'
+      }
+    }
+};
+
+var myTicketStatus = new Chart(ctx1, testData);
 var myChart2 = new Chart(ctx2, {{chart2JSON|safe}});
-var myChart3 = new Chart(ctx3, {{chart2JSON|safe}});
+var myChart3 = new Chart(ctx3, testData);
 var myChart4 = new Chart(ctx4, {{chart2JSON|safe}});
 </script>
 {% endblock %}

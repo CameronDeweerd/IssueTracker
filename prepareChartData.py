@@ -1,20 +1,23 @@
 """This will contain the different methods used to query the chart data for the dashboard"""
 from SQLhelpers import return_query, check_permission
-from flask import escape
 
 '''# of current user's tickets per status'''
 def myTicketStatus(user):
 
+
     # pull the list of issues and the list of statuses
     statusOptions = return_query("SELECT Type FROM Status")
     if check_permission('CanViewUnassigned'):
-        ticketList = return_query("SELECT issue_status FROM Issues WHERE user_assigned_to IS Null")
+        ticketList = return_query("SELECT issue_status FROM Issues WHERE user_assigned_to = Null OR user_assigned_to = ?", (user,))
+        print('unassigned')
     else:
-        ticketList = return_query("SELECT issue_status FROM Issues WHERE user_assigned_to IS ?", user)
+        print(user)
+        ticketList = return_query('SELECT issue_status FROM Issues WHERE user_assigned_to = ?', (user,))
+        print("assigned")
+
+    print(ticketList)
 
     numTicketsByStatus = tableCounter(statusOptions, ticketList)
-    print(list(numTicketsByStatus.keys()))
-    print(list(numTicketsByStatus.values()))
 
     options = getDefaultOptions()
     backgroundColor, borderColor = getColors(len(numTicketsByStatus))
@@ -34,7 +37,6 @@ def myTicketStatus(user):
         'options': options
     }
     # jsonData = "'" + str(jsonData).replace("'", "`") + "'"
-    print(jsonData)
 
     return jsonData
 
@@ -58,21 +60,20 @@ def workloadBreakdown():
 
 '''given a 1 column key table and 1 column table of countables, return a dict of counted data'''
 def tableCounter(keys, tableToCount):
-    if keys and tableToCount:
-        dictionary = {}
-        keysKey = list(keys[0].keys())[0]
+    dictionary = {}
+    keysKey = list(keys[0].keys())[0]
+
+    for row in range(len(keys)):
+        status = keys[row][keysKey]
+        dictionary[status] = 0
+
+    if tableToCount:
         tableToCountKey = list(tableToCount[0].keys())[0]
-
-        for row in range(len(keys)):
-            status = keys[row][keysKey]
-            dictionary[status] = 0
-
-        for row in range(len(keys)):
+        for row in range(len(tableToCount)):
             status = tableToCount[row][tableToCountKey]
             dictionary[status] += 1
-        return dictionary
-    else:
-        return
+
+    return dictionary
 
 
 def getDefaultOptions():

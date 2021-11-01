@@ -161,7 +161,8 @@ def submit():
 
         return redirect("/mytickets")
     else:
-        return render_template('submitticket.html')
+        categories = return_query("SELECT category FROM Categories")
+        return render_template('submitticket.html', category=categories)
 
 
 @issueTrack.route('/dashboard')
@@ -180,12 +181,14 @@ def dashboard():
 @login_required
 def mytickets():
     if not request.args.get('id'):
+
+        closed_tickets = return_query("SELECT * FROM Issues WHERE user_assigned_to = ? AND issue_status = 'Closed'", (session['user_id'],))
         # check to see if user has access to all tickets or should just display assigned
         if check_permission('FullAccess'):
-            tickets = return_query("SELECT * FROM Issues")
+            open_tickets = return_query("SELECT * FROM Issues WHERE (user_assigned_to = ? OR issue_status = 'unassigned') AND NOT issue_status = 'Closed'", (session['user_id'],))
         else:
-            tickets = return_query("SELECT * FROM Issues WHERE user_assigned_to = ?", (session['user_id'],))
-        return render_template('mytickets.html', tickets=tickets)
+            open_tickets = return_query("SELECT * FROM Issues WHERE user_assigned_to = ? AND NOT issue_status = 'Closed'", (session['user_id'],))
+        return render_template('mytickets.html', open_tickets=open_tickets, closed_tickets=closed_tickets)
     else:
         if request.method == "GET":
             '''This will bring us to a specific ticket'''
@@ -203,7 +206,7 @@ def mytickets():
             # TODO check if user has permissions
             description = request.form.get("description")
             status = request.form.get("status")
-            if description and not status == "Closed":  # Update the activity log
+            if description:  # Update the activity log
                 query = "INSERT INTO Activity \
                                    (issue_id, user_id, activity_date, activity_description) \
                                    VALUES (?, ?, ?, ?)"
