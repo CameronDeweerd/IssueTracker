@@ -6,10 +6,11 @@ from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 import prepareChartData
 
-
-issueTrackWeb = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates', static_folder='static')
+issueTrackWeb = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates',
+                          static_folder='static')
 # This one will work for local testing
 issueTrack = Blueprint('issueTrack', __name__, url_prefix='/', template_folder='templates', static_folder='static')
+
 
 # do queries like this:
 # var = return_query("SELECT * FROM Access")
@@ -67,12 +68,13 @@ def register():
             warning = "Please ensure passwords match"
             return render_template("register.html", warning=warning)
         # Check if username in use
-        inuse = return_query("SELECT Username FROM Users WHERE Username = ?", request.form.get("usernameEntry",))
+        inuse = return_query("SELECT Username FROM Users WHERE Username = ?", request.form.get("usernameEntry", ))
         if inuse:
             warning = "Username is in use already, please try again"
             return render_template("register.html", warning=warning)
         # If all else is good
-        execute_query("INSERT INTO Users (Username, Password, Access) Values (?, ?, ?)", (request.form.get("usernameEntry"), generate_password_hash(request.form.get("passwordEntry")), "submitter"))
+        execute_query("INSERT INTO Users (Username, Password, Access) Values (?, ?, ?)", (
+        request.form.get("usernameEntry"), generate_password_hash(request.form.get("passwordEntry")), "submitter"))
         return redirect("/")
     else:
         return render_template("register.html")
@@ -91,7 +93,8 @@ def show(page):
 @login_required
 def roles():
     if request.method == "POST":
-        execute_query("UPDATE Users SET Access = ? WHERE Username = ?", (request.form.get("roleselect"), request.form.get("userselect")))
+        execute_query("UPDATE Users SET Access = ? WHERE Username = ?",
+                      (request.form.get("roleselect"), request.form.get("userselect")))
         return redirect('/roles')
     else:
         # TODO change this up to use the SQLhelper function and database permission value
@@ -181,7 +184,7 @@ def mytickets():
         if check_permission('FullAccess'):
             tickets = return_query("SELECT * FROM Issues")
         else:
-            tickets = return_query("SELECT * FROM Issues WHERE [People Assigned] = ?", (session['user_id'],))
+            tickets = return_query("SELECT * FROM Issues WHERE user_assigned_to = ?", (session['user_id'],))
         return render_template('mytickets.html', tickets=tickets)
     else:
         if request.method == "GET":
@@ -192,14 +195,15 @@ def mytickets():
             activityData = return_query("SELECT * FROM Activity WHERE issue_id = ?", request.args.get('id'))
             activityData.reverse()
             statusOptions = return_query("SELECT * FROM Status")
-            return render_template('ticketupdate.html', activityData=activityData, ticketData=ticketData[0], statusOptions=statusOptions)
+            return render_template('ticketupdate.html', activityData=activityData, ticketData=ticketData[0],
+                                   statusOptions=statusOptions)
         elif request.method == "POST":
             '''This is triggered when activity is submitted on a specific ticket'''
             '''add the new activity into the DB'''
             # TODO check if user has permissions
             description = request.form.get("description")
             status = request.form.get("status")
-            if description and not status == "Closed":     # Update the activity log
+            if description and not status == "Closed":  # Update the activity log
                 query = "INSERT INTO Activity \
                                    (issue_id, user_id, activity_date, activity_description) \
                                    VALUES (?, ?, ?, ?)"
@@ -208,7 +212,7 @@ def mytickets():
                               datetime.now().date(),
                               request.form.get("description"))
                 execute_query(query, parameters)
-            if status:          # if the status was changed then update the activity log and issues page
+            if status:  # if the status was changed then update the activity log and issues page
                 # Add a new activity
                 query = "INSERT INTO Activity \
                                    (issue_id, user_id, activity_date, activity_description) \
@@ -236,18 +240,26 @@ def mytickets():
             return redirect(redirectLink)
 
 
-@issueTrack.route('/assigntickets')
+@issueTrack.route('/assigntickets', methods=['GET', 'POST'])
 @login_required
 def assigntickets():
-    if not request.args.get('id'):
-        if check_permission('FullAccess'):
-            tickets = return_query("SELECT * FROM Issues WHERE issue_status = ?", ("unassigned",))
-            return render_template("alltickets.html", tickets=tickets)
-        else:
-            return redirect("/mytickets")
+    if request.method == "POST":
+        issueID = request.form.get("issueID")
+        person = request.form.get("people")
+        if person:
+            execute_query("UPDATE Issues SET user_assigned_to = ?, issue_status = ? WHERE issue_id = ?", (person, "Open", issueID))
+            query = ("INSERT INTO Activity \
+                    (issue_id, activity_description, user_id, activity_date) VALUES (?, ?, ?, ?)")
+            parameters = (issueID, f"Assigned to {person}", session['user_id'], datetime.now().date())
+            execute_query(query, parameters)
+    if not check_permission('FullAccess'):
+        return redirect("/mytickets")
     else:
-        # Todo something with this button
-        return redirect("/assigntickets")
+        tickets = return_query("SELECT * FROM Issues WHERE issue_status = ?", ("unassigned",))
+        users = return_query("SELECT Username, Access FROM Users")
+        return render_template("alltickets.html", tickets=tickets, users=users)
+
+
 # @issueTrack.route('/myprojects')
 # def myprojects():
 #     return render_template('myprojects.html')
