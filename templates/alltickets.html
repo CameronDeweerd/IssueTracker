@@ -19,7 +19,6 @@ All Tickets
                 <th onclick='sortTable(4)'>Submitted By</th>
                 <th onclick='sortTable(5)'>Date Created</th>
                 <th onclick='sortTable(6)'>Status</th>
-                <th onclick='sortTable(7)'>Date Closed</th>
                 <th>Assign Ticket</th>
             </tr>
         </thead>
@@ -33,7 +32,6 @@ All Tickets
                 <td>{{ i.submitter_id }}</td>
                 <td>{{ i.date_created }}</td>
                 <td>{{ i.issue_status }}</td>
-                <td>{{ i['Date Closed'] }}</td>
                 <td>
                     <form action="/assigntickets" method="post">
                         <input type="text" name='issueID' value='{{ i.issue_id }}' hidden>

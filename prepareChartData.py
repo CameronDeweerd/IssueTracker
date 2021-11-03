@@ -39,6 +39,7 @@ def myTicketStatus(user):
 
 '''# of open tickets per category'''
 def openIssuesByCategory(user):
+    print("open Issues by Category")
     # pull the list of issues and the list of categories
     categoryOptions = return_query("SELECT category FROM Categories")
     if check_permission('CanViewUnassigned'):
@@ -82,7 +83,7 @@ def ticketTurnaroundTime():
 def workloadBreakdown():
     # pull the list of issues and the list of categories
     userList = return_query("SELECT Username FROM Users")
-    ticketList = return_query("SELECT user_assigned_to FROM Issues WHERE NOT issue_status = 'Closed'")
+    ticketList = return_query("SELECT user_assigned_to FROM Issues WHERE NOT issue_status = 'Closed' AND NOT issue_status = 'unassigned'")
 
     print(ticketList)
 

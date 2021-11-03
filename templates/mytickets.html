@@ -9,7 +9,6 @@ My Tickets
     <div class='justify-content-center align-items-center'>
         <p class='h1'>My Open Tickets</p>
     </div>
-    {% if open_tickets %}
     <table class="table table-striped table-hover" id='table1'>
         <thead>
             <tr>
@@ -24,6 +23,7 @@ My Tickets
                 <th>Update Ticket</th>
             </tr>
         </thead>
+        {% if open_tickets %}
         <tbody>
             {% for i in open_tickets %}
             <tr id="open_ticket_{{i.id}}">
@@ -39,14 +39,14 @@ My Tickets
             </tr>
             {% endfor %}
         </tbody>
+        {% endif %}
     </table>
-    {% endif %}
 </div>
 <div class="mt-sm-1">
     <div class='justify-content-center align-items-center'>
         <p class='h1'>My Closed Tickets</p>
     </div>
-    {% if closed_tickets %}
+
     <table class="table table-striped table-hover" id='table2'>
         <thead>
             <tr>
@@ -61,6 +61,7 @@ My Tickets
                 <th>Update Ticket</th>
             </tr>
         </thead>
+        {% if closed_tickets %}
         <tbody>
             {% for i in closed_tickets %}
             <tr id="closed_ticket_{{i.id}}">
@@ -76,8 +77,9 @@ My Tickets
             </tr>
             {% endfor %}
         </tbody>
+        {% endif %}
     </table>
-    {% endif %}
+
 </div>
 {% endblock %}
 {% block script %}

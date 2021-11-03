@@ -7,7 +7,7 @@ Dashboard
 {% block main %}
 <div class="chart-flex-container">
     <div class='chart-container' >
-        <canvas class='chart' id="myTicketStatus"></canvas>
+        <canvas class='chart' id="myChart1"></canvas>
     </div>
     <div class='chart-container' >
         <canvas class='chart' id="myChart2"></canvas>
@@ -31,7 +31,7 @@ Dashboard
 
 
 <script>
-var ctx1 = document.getElementById('myTicketStatus').getContext('2d');
+var ctx1 = document.getElementById('myChart1').getContext('2d');
 var ctx2 = document.getElementById('myChart2').getContext('2d');
 var ctx3 = document.getElementById('myChart3').getContext('2d');
 var ctx4 = document.getElementById('myChart4').getContext('2d');
@@ -57,7 +57,7 @@ testData = {
     }
 };
 
-var myTicketStatus = new Chart(ctx1, {{chart1JSON|safe}});
+var myChart1 = new Chart(ctx1, {{chart1JSON|safe}});
 var myChart2 = new Chart(ctx2, {{chart2JSON|safe}});
 var myChart3 = new Chart(ctx3, {{chart3JSON|safe}});
 var myChart4 = new Chart(ctx4, testData);
