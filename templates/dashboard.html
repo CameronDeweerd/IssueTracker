@@ -57,10 +57,11 @@ testData = {
     }
 };
 
-var myTicketStatus = new Chart(ctx1, testData);
+var myTicketStatus = new Chart(ctx1, {{chart1JSON|safe}});
 var myChart2 = new Chart(ctx2, {{chart2JSON|safe}});
-var myChart3 = new Chart(ctx3, testData);
-var myChart4 = new Chart(ctx4, {{chart2JSON|safe}});
+var myChart3 = new Chart(ctx3, {{chart3JSON|safe}});
+var myChart4 = new Chart(ctx4, testData);
+
 </script>
 {% endblock %}
 

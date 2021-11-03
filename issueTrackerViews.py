@@ -169,8 +169,10 @@ def submit():
 @login_required
 def dashboard():
     # TODO return various different chart data depending on the user access level
+    chart1 = prepareChartData.openIssuesByCategory(session["user_id"])
     chart2 = prepareChartData.myTicketStatus(session["user_id"])
-    return render_template('dashboard.html', chart2JSON=chart2)
+    chart3 = prepareChartData.workloadBreakdown()
+    return render_template('dashboard.html', chart1JSON=chart1, chart2JSON=chart2, chart3JSON=chart3)
 
 
 # @issueTrack.route('/projectusers')

@@ -4,7 +4,6 @@ from SQLhelpers import return_query, check_permission
 '''# of current user's tickets per status'''
 def myTicketStatus(user):
 
-
     # pull the list of issues and the list of statuses
     statusOptions = return_query("SELECT Type FROM Status")
     if check_permission('CanViewUnassigned'):
@@ -15,11 +14,9 @@ def myTicketStatus(user):
         ticketList = return_query('SELECT issue_status FROM Issues WHERE user_assigned_to = ?', (user,))
         print("assigned")
 
-    print(ticketList)
-
     numTicketsByStatus = tableCounter(statusOptions, ticketList)
 
-    options = getDefaultOptions()
+    options = getDefaultOptions(f'Issue Statuses assigned to {user}')
     backgroundColor, borderColor = getColors(len(numTicketsByStatus))
 
     jsonData = {
@@ -36,14 +33,44 @@ def myTicketStatus(user):
         },
         'options': options
     }
-    # jsonData = "'" + str(jsonData).replace("'", "`") + "'"
 
     return jsonData
 
 
 '''# of open tickets per category'''
-def openIssuesByCategory():
-    return
+def openIssuesByCategory(user):
+    # pull the list of issues and the list of categories
+    categoryOptions = return_query("SELECT category FROM Categories")
+    if check_permission('CanViewUnassigned'):
+        ticketList = return_query("SELECT issue_category FROM Issues WHERE (user_assigned_to = Null OR user_assigned_to = ?) AND NOT issue_status = 'closed'", (user,))
+        print('unassigned')
+    else:
+        print(user)
+        ticketList = return_query('SELECT issue_category FROM Issues WHERE user_assigned_to = ? AND NOT issue_status = "closed"', (user,))
+        print("assigned")
+
+    numTicketsByCategory = tableCounter(categoryOptions, ticketList)
+
+    options = getDefaultOptions(f'Open Tickets by Category assigned to {user}')
+    backgroundColor, borderColor = getColors(len(numTicketsByCategory))
+
+    jsonData = {
+        'type': 'bar',
+        'data': {
+            'labels': list(numTicketsByCategory.keys()),
+            'datasets': [{
+                'label': 'Number of Tickets',
+                'data': list(numTicketsByCategory.values()),
+                'backgroundColor': backgroundColor,
+                'borderColor': borderColor,
+                'borderWidth': 1
+            }]
+        },
+        'options': options
+    }
+
+    return jsonData
+
 
 
 '''bucket display of closed tickets (completion date - creation date)'''
@@ -53,9 +80,33 @@ def ticketTurnaroundTime():
 
 '''# of open tickets each employee currently has'''
 def workloadBreakdown():
+    # pull the list of issues and the list of categories
+    userList = return_query("SELECT Username FROM Users")
+    ticketList = return_query("SELECT user_assigned_to FROM Issues WHERE NOT issue_status = 'Closed'")
 
+    print(ticketList)
 
-    return
+    numTicketsByUser = tableCounter(userList, ticketList)
+
+    options = getDefaultOptions('Open Tickets by Users')
+    backgroundColor, borderColor = getColors(len(numTicketsByUser))
+
+    jsonData = {
+        'type': 'bar',
+        'data': {
+            'labels': list(numTicketsByUser.keys()),
+            'datasets': [{
+                'label': 'Number of Tickets',
+                'data': list(numTicketsByUser.values()),
+                'backgroundColor': backgroundColor,
+                'borderColor': borderColor,
+                'borderWidth': 1
+            }]
+        },
+        'options': options
+    }
+
+    return jsonData
 
 
 '''given a 1 column key table and 1 column table of countables, return a dict of counted data'''
@@ -76,11 +127,17 @@ def tableCounter(keys, tableToCount):
     return dictionary
 
 
-def getDefaultOptions():
+def getDefaultOptions(title):
     defaultOptions = {
         'aspectRatio': 1,
         'responsive': 1,
         'maintainAspectRatio': 0,
+        'plugins': {
+            'title': {
+                'display': 1,
+                'text': title
+            }
+        }
     }
     return defaultOptions
 

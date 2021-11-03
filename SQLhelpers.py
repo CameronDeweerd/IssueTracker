@@ -6,6 +6,7 @@ from flask import session   # TODO make it so i don't need this import here
 def SQL_connect():
     # Connect to database todo don't know if checksamethread=false is bad practice
     connection = sqlite3.connect("./static/IssueTracker.db", check_same_thread=False)
+
     connection.row_factory = dict_factory
     return connection
 
