@@ -9,11 +9,13 @@ Role Assignment
     <div class='justify-content-center align-items-center'>
         <p class='h1'>Roles</p>
         <form action="/roles" method='post'>
+            <span>Change</span>
             <select class='formselect' aria-label='User select' name="userselect" id="userselect">
                 {% for user in useraccess %}
                 <option value="{{ user.Username }}">{{ user.Username}} - {{ user.Access }}</option>
                 {% endfor %}
             </select>
+            <span>to</span>
             <select class='formselect' name="roleselect" id="roleselect">
                 {% for role in allowroles %}
                 <option value="{{ role.Type }}">{{ role.Type }}</option>
