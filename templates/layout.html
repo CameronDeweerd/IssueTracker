@@ -43,41 +43,40 @@
   </nav>
 
   <!--Flexbox sidebar-->
-  <div class="container-fluid vh-auto">
+  <div class="container-fluid">
     <div class="row" id="main-and-sidenav-container">
       {% if session.user_id %}
-      <div class="navbar col-2 navbar-light bg-dark align-items-start justify-content-start" id="navbar-side">
-        <!--      TODO      I don't know what most of these classes do since I pasted them. will need to check them out later-->
-        <div class="d-flex flex-column align-items-top align-items-sm-start px-3 pt-2 text-white">
-          <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+      <nav class="navbar col-2 navbar-dark bg-dark align-items-start justify-content-start" id="navbar-side">
+        <div class="navbar-nav d-flex flex-column align-items-top align-items-sm-start px-3 pt-2">
+          <ul class="nav flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
             <li class="nav-item">
-              <a href="./dashboard" class="nav-link align-middle px-0">
-                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span>
+              <a href="./dashboard" class="nav-link">
+                <i class="fs-4 bi-house"></i> <span>Dashboard</span>
               </a>
             </li>
             <li class="nav-item">
-              <a href="./roles" class="nav-link align-middle px-0">
-                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Role Assignment</span>
+              <a href="./roles" class="nav-link">
+                <i class="fs-4 bi-house"></i> <span>Role Assignment</span>
               </a>
             </li>
             <li class="nav-item">
-              <a href="./assigntickets" class="nav-link align-middle px-0">
-                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Assign Tickets</span>
+              <a href="./assigntickets" class="nav-link">
+                <i class="fs-4 bi-house"></i> <span>Assign Tickets</span>
               </a>
             </li>
             <li class="nav-item">
-              <a href="./mytickets" class="nav-link align-middle px-0">
-                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">My Tickets</span>
+              <a href="./mytickets" class="nav-link">
+                <i class="fs-4 bi-house"></i> <span>My Tickets</span>
               </a>
             </li>
             <li class="nav-item">
-              <a href="./submitticket" class="nav-link align-middle px-0">
-                <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Submit Tickets</span>
+              <a href="./submitticket" class="nav-link">
+                <i class="fs-4 bi-house"></i> <span>Submit Tickets</span>
               </a>
             </li>
           </ul>
         </div>
-      </div>
+      </nav>
       {% endif %}
       <div class="col-10 justify-center" id="main-content-box">
         {% block main %}{% endblock %}
