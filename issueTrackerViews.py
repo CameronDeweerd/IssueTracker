@@ -30,6 +30,12 @@ def index():
         elif request.form.get("user"):
             session["user_id"] = "testuser"
             return redirect(url_for(".dashboard"))
+        elif request.form.get("dev"):
+            session["user_id"] = "testdev"
+            return redirect(url_for(".dashboard"))
+        elif request.form.get("manager"):
+            session["user_id"] = "testmanager"
+            return redirect(url_for(".dashboard"))
         # todo add the other two when they might matter
 
         # Ensure username was submitted
@@ -106,26 +112,29 @@ def show(page):
 @issueTrack.route('/roles', methods=['GET', 'POST'])
 @login_required
 def roles():
-    if request.method == "POST":
-        execute_query("UPDATE Users SET Access = ? WHERE Username = ?",
-                      (request.form.get("roleselect"), request.form.get("userselect")))
-        return redirect(url_for(".roles"))
-    else:
-        # TODO change this up to use the SQLhelper function and database permission value
-        # Determine access level of current user
-        accesslevel = return_query("SELECT Access FROM Users WHERE Username = ?", (session['user_id'],))
-        accesslevel = accesslevel[0]["Access"]
-        useraccess = [{'Username': session['user_id'], 'Access': accesslevel}]
-        allowroles = [{'Type': accesslevel}]
-        # Determine which users they're allowed to edit
-        if accesslevel == "admin":
-            # Admin level gets to edit all users
-            useraccess = return_query("SELECT Username, Access FROM Users ORDER BY Access, Username")
-            # Admin level gets to assign any role to a user
-            allowroles = return_query("SELECT Type FROM Access")
-        # User level does not get to edit anyone
+    if check_permission('CanChangeRoles'):
+        if request.method == "POST":
+            execute_query("UPDATE Users SET Access = ? WHERE Username = ?",
+                          (request.form.get("roleselect"), request.form.get("userselect")))
+            return redirect(url_for(".roles"))
+        else:
+            # TODO change this up to use the SQLhelper function and database permission value
+            # Determine access level of current user
+            accesslevel = return_query("SELECT Access FROM Users WHERE Username = ?", (session['user_id'],))
+            accesslevel = accesslevel[0]["Access"]
+            useraccess = [{'Username': session['user_id'], 'Access': accesslevel}]
+            allowroles = [{'Type': accesslevel}]
+            # Determine which users they're allowed to edit
+            if accesslevel == "admin":
+                # Admin level gets to edit all users
+                useraccess = return_query("SELECT Username, Access FROM Users ORDER BY Access, Username")
+                # Admin level gets to assign any role to a user
+                allowroles = return_query("SELECT Type FROM Access")
+            # User level does not get to edit anyone
 
-        return render_template('roles.html', useraccess=useraccess, allowroles=allowroles)
+            return render_template('roles.html', useraccess=useraccess, allowroles=allowroles)
+    else:
+        return redirect(url_for(".dashboard"))
 
 
 @issueTrack.route('/logout')
@@ -186,7 +195,8 @@ def dashboard():
     chart1 = prepareChartData.openIssuesByCategory(session["user_id"])
     chart2 = prepareChartData.myTicketStatus(session["user_id"])
     chart3 = prepareChartData.workloadBreakdown()
-    return render_template('dashboard.html', chart1JSON=chart1, chart2JSON=chart2, chart3JSON=chart3)
+    chart4 = prepareChartData.mySubmittedTickets(session["user_id"])
+    return render_template('dashboard.html', chart1JSON=chart1, chart2JSON=chart2, chart3JSON=chart3, chart4JSON=chart4)
 
 
 @issueTrack.route('/mytickets', methods=['GET', 'POST'])
@@ -196,7 +206,7 @@ def mytickets():
 
         closed_tickets = return_query("SELECT * FROM Issues WHERE user_assigned_to = ? AND issue_status = 'Closed'", (session['user_id'],))
         # check to see if user has access to all tickets or should just display assigned
-        if check_permission('FullAccess'):
+        if check_permission('CanAssignTickets'):
             open_tickets = return_query("SELECT * FROM Issues WHERE (user_assigned_to = ? OR issue_status = 'unassigned') AND NOT issue_status = 'Closed'", (session['user_id'],))
         else:
             open_tickets = return_query("SELECT * FROM Issues WHERE user_assigned_to = ? AND NOT issue_status = 'Closed'", (session['user_id'],))
@@ -206,8 +216,8 @@ def mytickets():
             '''This will bring us to a specific ticket'''
             # TODO check if user is admin or assigned to ticket
             # TODO check if ticket is actually in the DB
-            ticketData = return_query("SELECT * FROM Issues WHERE issue_id = ?", request.args.get('id'))
-            activityData = return_query("SELECT * FROM Activity WHERE issue_id = ?", request.args.get('id'))
+            ticketData = return_query("SELECT * FROM Issues WHERE issue_id = ?", (request.args.get('id'),))
+            activityData = return_query("SELECT * FROM Activity WHERE issue_id = ?", (request.args.get('id'),))
             activityData.reverse()
             statusOptions = return_query("SELECT * FROM Status")
             return render_template('ticketupdate.html', activityData=activityData, ticketData=ticketData[0],
@@ -267,15 +277,19 @@ def assigntickets():
                     (issue_id, activity_description, user_id, activity_date) VALUES (?, ?, ?, ?)")
             parameters = (issueID, f"Assigned to {person}", session['user_id'], datetime.now().date())
             execute_query(query, parameters)
-    if not check_permission('FullAccess'):
-        return redirect(url_for(".mytickets"))
+    if not check_permission('CanAssignTickets'):
+        return redirect(url_for(".dashboard"))
     else:
-        tickets = return_query("SELECT * FROM Issues WHERE issue_status = ?", ("unassigned",))
+        if check_permission('FullAccess'):
+            tickets = return_query("SELECT * FROM Issues WHERE NOT issue_status = ?", ("Closed",))
+        else:
+            tickets = return_query("SELECT * FROM Issues WHERE issue_status = ?", ("unassigned",))
         users = return_query("SELECT Username, Access FROM Users")
-        return render_template("alltickets.html", tickets=tickets, users=users)
+        return render_template("assigntickets.html", tickets=tickets, users=users)
 
 
 @issueTrack.route('/profile')
+@login_required
 def profile():
     username = session['user_id']
     access = return_query("SELECT Access FROM Users WHERE Username = ?", (username,))
@@ -284,6 +298,21 @@ def profile():
     permissions = permissions[0]
     permissions.pop("Type")
     return render_template('profile.html', username=username, access=access, permissions=permissions)
+
+
+@issueTrack.route('/alltickets')
+@login_required
+def alltickets():
+    if not request.args.get('id'):
+        tickets = return_query("SELECT * FROM Issues")
+        return render_template('alltickets.html', tickets=tickets)
+    else:
+        '''This will bring us to a specific ticket'''
+        # TODO check if ticket is actually in the DB
+        ticketData = return_query("SELECT * FROM Issues WHERE issue_id = ?", (request.args.get('id'),))
+        activityData = return_query("SELECT * FROM Activity WHERE issue_id = ?", (request.args.get('id'),))
+        activityData.reverse()
+        return render_template('ticketupdate.html', canUpdate=0, activityData=activityData, ticketData=ticketData[0])
 
 
 @issueTrack.errorhandler(404)

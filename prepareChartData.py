@@ -16,7 +16,7 @@ def myTicketStatus(user):
 
     numTicketsByStatus = tableCounter(statusOptions, ticketList)
 
-    options = getDefaultOptions(f'Issue Statuses assigned to {user}')
+    options = getDefaultOptions(f'Status of Issues that are assigned to {user}')
     backgroundColor, borderColor = getColors(len(numTicketsByStatus))
 
     jsonData = {
@@ -43,16 +43,11 @@ def openIssuesByCategory(user):
     # pull the list of issues and the list of categories
     categoryOptions = return_query("SELECT category FROM Categories")
     if check_permission('CanViewUnassigned'):
-        ticketList = return_query("SELECT issue_category FROM Issues WHERE (user_assigned_to = Null OR user_assigned_to = ?) AND NOT issue_status = 'closed'", (user,))
-        print('unassigned')
-    else:
-        print(user)
-        ticketList = return_query('SELECT issue_category FROM Issues WHERE user_assigned_to = ? AND NOT issue_status = "closed"', (user,))
-        print("assigned")
+        ticketList = return_query("SELECT issue_category FROM Issues WHERE NOT issue_status = 'Closed'")
 
     numTicketsByCategory = tableCounter(categoryOptions, ticketList)
 
-    options = getDefaultOptions(f'Open Tickets by Category assigned to {user}')
+    options = getDefaultOptions(f'Open Tickets by Category')
     backgroundColor, borderColor = getColors(len(numTicketsByCategory))
 
     jsonData = {
@@ -78,6 +73,35 @@ def openIssuesByCategory(user):
 def ticketTurnaroundTime():
     return
 
+
+'''Count of tickets submitted by the current user and their status'''
+def mySubmittedTickets(user):
+
+    # pull the list of issues and the list of statuses
+    statusOptions = return_query("SELECT Type FROM Status")
+    ticketList = return_query("SELECT issue_status FROM Issues WHERE user_submitted_by = ?", (user,))
+
+    numTicketsByStatus = tableCounter(statusOptions, ticketList)
+
+    options = getDefaultOptions(f'Status of tickets submitted by {user}')
+    backgroundColor, borderColor = getColors(len(numTicketsByStatus))
+
+    jsonData = {
+        'type': 'doughnut',
+        'data': {
+            'labels': list(numTicketsByStatus.keys()),
+            'datasets': [{
+                'label': list(numTicketsByStatus.keys()),
+                'data': list(numTicketsByStatus.values()),
+                'backgroundColor': backgroundColor,
+                'borderColor': borderColor,
+                'borderWidth': 1
+            }]
+        },
+        'options': options
+    }
+
+    return jsonData
 
 '''# of open tickets each employee currently has'''
 def workloadBreakdown():

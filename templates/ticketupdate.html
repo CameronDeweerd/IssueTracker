@@ -38,6 +38,7 @@ Ticket #{{ticketData.issue_id}}
         </tbody>
         </table>
     </div>
+    {% if canUpdate %}
     <div>
         <h2>New Activity</h2>
         <form class="chart-flex-container" method='post'>
@@ -60,6 +61,7 @@ Ticket #{{ticketData.issue_id}}
             </div>
         </form>
     </div>
+    {% endif %}
     <div>
         <h2>History</h2>
             <table class="table table-striped table-hover" id='table1'>

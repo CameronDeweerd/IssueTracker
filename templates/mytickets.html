@@ -35,7 +35,7 @@ My Tickets
                 <td>{{ i.date_created }}</td>
                 <td>{{ i.issue_status }}</td>
                 <td>{{ i.date_closed }}</td>
-                <td><button onclick="window.location.href='/mytickets?id={{i.issue_id}}'">Update</button></td>
+                <td><button onclick="window.location.href='./mytickets?id={{i.issue_id}}'">Update</button></td>
             </tr>
             {% endfor %}
         </tbody>
