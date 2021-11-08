@@ -60,6 +60,7 @@ def index():
     else:
         return redirect(url_for(".login"))
 
+
 @issueTrack.route('/login')
 def login():
     if session:
@@ -98,15 +99,6 @@ def register():
         return redirect(url_for(".index"))
     else:
         return render_template("register.html")
-
-
-# will look for a specific route first and if it doesn't find it then it will use this
-@issueTrack.route('/<page>')
-def show(page):
-    try:
-        return render_template(f'{page}.html')
-    except TemplateNotFound:
-        abort(404)
 
 
 @issueTrack.route('/roles', methods=['GET', 'POST'])
@@ -203,7 +195,6 @@ def dashboard():
 @login_required
 def mytickets():
     if not request.args.get('id'):
-
         closed_tickets = return_query("SELECT * FROM Issues WHERE user_assigned_to = ? AND issue_status = 'Closed'", (session['user_id'],))
         # check to see if user has access to all tickets or should just display assigned
         if check_permission('CanAssignTickets'):
@@ -220,7 +211,13 @@ def mytickets():
             activityData = return_query("SELECT * FROM Activity WHERE issue_id = ?", (request.args.get('id'),))
             activityData.reverse()
             statusOptions = return_query("SELECT * FROM Status")
-            return render_template('ticketupdate.html', activityData=activityData, ticketData=ticketData[0],
+            print(ticketData)
+            if ticketData[0]['user_assigned_to'] == session["user_id"]:
+                canUpdate = 1
+            else:
+                canUpdate = 0
+
+            return render_template('ticketupdate.html', canUpdate=canUpdate, activityData=activityData, ticketData=ticketData[0],
                                    statusOptions=statusOptions)
         elif request.method == "POST":
             '''This is triggered when activity is submitted on a specific ticket'''
@@ -313,6 +310,15 @@ def alltickets():
         activityData = return_query("SELECT * FROM Activity WHERE issue_id = ?", (request.args.get('id'),))
         activityData.reverse()
         return render_template('ticketupdate.html', canUpdate=0, activityData=activityData, ticketData=ticketData[0])
+
+
+# will look for a specific route first and if it doesn't find it then it will use this
+@issueTrack.route('/<page>')
+def show(page):
+    try:
+        return render_template(f'{page}.html')
+    except TemplateNotFound:
+        abort(404)
 
 
 @issueTrack.errorhandler(404)

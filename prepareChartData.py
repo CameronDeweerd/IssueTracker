@@ -38,12 +38,11 @@ def myTicketStatus(user):
 
 
 '''# of open tickets per category'''
-def openIssuesByCategory(user):
+def openIssuesByCategory(user=''):
     print("open Issues by Category")
     # pull the list of issues and the list of categories
     categoryOptions = return_query("SELECT category FROM Categories")
-    if check_permission('CanViewUnassigned'):
-        ticketList = return_query("SELECT issue_category FROM Issues WHERE NOT issue_status = 'Closed'")
+    ticketList = return_query("SELECT issue_category FROM Issues WHERE NOT issue_status = 'Closed'")
 
     numTicketsByCategory = tableCounter(categoryOptions, ticketList)
 
