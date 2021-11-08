@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, redirect, request, session, abort
+from flask import render_template, Blueprint, redirect, request, session, abort, url_for
 from jinja2 import TemplateNotFound
 from helpers import apology, login_required
 from SQLhelpers import execute_query, return_query, check_permission
@@ -6,10 +6,11 @@ from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 import prepareChartData
 
-issueTrackWeb = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates',
+
+issueTrack = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates',
                           static_folder='static')
 # This one will work for local testing
-issueTrack = Blueprint('issueTrack', __name__, url_prefix='/', template_folder='templates', static_folder='static')
+# issueTrack = Blueprint('issueTrack', __name__, url_prefix='/', template_folder='templates', static_folder='static')
 
 
 # do queries like this:
@@ -23,10 +24,10 @@ def index():
         # Check if Demo account
         if request.form.get("admin"):
             session["user_id"] = "testadmin"
-            return redirect("/dashboard")
+            return redirect(url_for(".dashboard"))
         elif request.form.get("user"):
             session["user_id"] = "testuser"
-            return redirect("/dashboard")
+            return redirect(url_for(".dashboard"))
         # todo add the other two when they might matter
 
         # Ensure username was submitted
@@ -44,9 +45,16 @@ def index():
         session["user_id"] = rows[0]["Username"]
 
         # Redirect user to home page
-        return redirect("/dashboard")
+        return redirect(url_for(".dashboard"))
+    elif session:
+        # Redirect user to home page
+        return redirect(url_for(".dashboard"))
     else:
-        return render_template("login.html")
+        return redirect(url_for(".login"))
+
+@issueTrack.route('/login')
+def login():
+    return render_template("login.html")
 
 
 @issueTrack.route('/register', methods=['GET', 'POST'])
@@ -75,7 +83,7 @@ def register():
         # If all else is good
         execute_query("INSERT INTO Users (Username, Password, Access) Values (?, ?, ?)", (
         request.form.get("usernameEntry"), generate_password_hash(request.form.get("passwordEntry")), "submitter"))
-        return redirect("/")
+        return redirect(url_for(".index"))
     else:
         return render_template("register.html")
 
@@ -95,7 +103,7 @@ def roles():
     if request.method == "POST":
         execute_query("UPDATE Users SET Access = ? WHERE Username = ?",
                       (request.form.get("roleselect"), request.form.get("userselect")))
-        return redirect('/roles')
+        return redirect(url_for(".roles"))
     else:
         # TODO change this up to use the SQLhelper function and database permission value
         # Determine access level of current user
@@ -118,7 +126,7 @@ def roles():
 def logout():
     # Forget user_id
     session.clear()
-    return redirect("/login")
+    return redirect(url_for(".login"))
 
 
 @issueTrack.route('/submitticket', methods=['GET', 'POST'])
@@ -159,7 +167,7 @@ def submit():
                       'Ticket Created')
         execute_query(query, parameters)
 
-        return redirect("/mytickets")
+        return redirect(url_for(".mytickets"))
     else:
         categories = return_query("SELECT category FROM Categories")
         return render_template('submitticket.html', category=categories)
@@ -175,10 +183,6 @@ def dashboard():
     return render_template('dashboard.html', chart1JSON=chart1, chart2JSON=chart2, chart3JSON=chart3)
 
 
-# @issueTrack.route('/projectusers')
-# def projectusers():
-#     return render_template('projectusers.html')
-#
 @issueTrack.route('/mytickets', methods=['GET', 'POST'])
 @login_required
 def mytickets():
@@ -240,7 +244,7 @@ def mytickets():
                     parameters = (datetime.now().date(),
                                   request.args.get('id'))
                     execute_query(query, parameters)
-            redirectLink = f'/mytickets?id={request.args.get("id")}'
+            redirectLink = f'{url_for(".mytickets")}?id={request.args.get("id")}'
             print(redirect)
             return redirect(redirectLink)
 
@@ -258,17 +262,13 @@ def assigntickets():
             parameters = (issueID, f"Assigned to {person}", session['user_id'], datetime.now().date())
             execute_query(query, parameters)
     if not check_permission('FullAccess'):
-        return redirect("/mytickets")
+        return redirect(url_for(".mytickets"))
     else:
         tickets = return_query("SELECT * FROM Issues WHERE issue_status = ?", ("unassigned",))
         users = return_query("SELECT Username, Access FROM Users")
         return render_template("alltickets.html", tickets=tickets, users=users)
 
 
-# @issueTrack.route('/myprojects')
-# def myprojects():
-#     return render_template('myprojects.html')
-#
 @issueTrack.route('/profile')
 def profile():
     username = session['user_id']

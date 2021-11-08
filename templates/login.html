@@ -11,7 +11,7 @@ Portfolio
             <div class='formtitle'>
                 Issue Tracker Login
             </div>
-            <form action="/" method='post'>
+            <form action="{{ url_for('.index') }}" method='post'>
                 <div class='textholder'>
                     <input type="text" placeholder='Username' name='username' autocomplete='off'>
                 </div>
@@ -27,7 +27,7 @@ Portfolio
             <div class='formtitle'>
                 Login with a Demo Account
             </div>
-            <form action="/" method="post">
+            <form action="{{ url_for('.index') }}" method="post">
                 <div id='buttonbox'>
                     <div class='buttonholder'>
                         <button type='submit' name='admin' class='demobutton' value='admin'>Admin</button>

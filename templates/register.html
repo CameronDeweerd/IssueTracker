@@ -11,7 +11,7 @@ Register
             <div class='formtitle'>
                 Register New Account
             </div>
-            <form action="/register" method='post'>
+            <form action="{{ url_for('.register') }}" method='post'>
                 <div class='textholder'>
                     <label for="usernameEntry"></label>
                     <input type="text" placeholder='Username' autocomplete='off' name='usernameEntry' autofocus>

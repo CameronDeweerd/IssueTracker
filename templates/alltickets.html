@@ -33,7 +33,7 @@ All Tickets
                 <td>{{ i.date_created }}</td>
                 <td>{{ i.issue_status }}</td>
                 <td>
-                    <form action="/assigntickets" method="post">
+                    <form action="{{ url_for('.assigntickets') }}" method="post">
                         <input type="text" name='issueID' value='{{ i.issue_id }}' hidden>
                         <label for="select{{ i.issue_id }}"></label>
                         <select name="people" id="select{{ i.issue_id }}">
