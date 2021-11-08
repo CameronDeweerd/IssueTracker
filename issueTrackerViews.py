@@ -54,7 +54,11 @@ def index():
 
 @issueTrack.route('/login')
 def login():
-    return render_template("login.html")
+    if session:
+        # Redirect user to home page
+        return redirect(url_for(".dashboard"))
+    else:
+        return render_template("login.html")
 
 
 @issueTrack.route('/register', methods=['GET', 'POST'])

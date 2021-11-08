@@ -1,12 +1,17 @@
 """All SQL related helper functions to be kept here"""
 import sqlite3
-from flask import session   # TODO make it so i don't need this import here
+import os
+from flask import session, url_for
 
+path = os.path.dirname(os.path.abspath(__file__))
+db = os.path.join(path, './static/IssueTracker.db')
 
 def SQL_connect():
     # Connect to database todo don't know if checksamethread=false is bad practice
-    connection = sqlite3.connect("./static/IssueTracker.db", check_same_thread=False)
-
+    # print(url_for(".static", filename='IssueTracker.db'))
+    connection = sqlite3.connect(db)
+    # connection = sqlite3.connect(url_for(".static", filename='IssueTracker.db'), check_same_thread=False)
+    # connection = sqlite3.connect("./static/IssueTracker.db", check_same_thread=False)
     connection.row_factory = dict_factory
     return connection
 
