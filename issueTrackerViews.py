@@ -1,3 +1,4 @@
+import platform
 from flask import render_template, Blueprint, redirect, request, session, abort, url_for
 from jinja2 import TemplateNotFound
 from helpers import apology, login_required
@@ -6,11 +7,12 @@ from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 import prepareChartData
 
-
-issueTrack = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates',
+# This will remove the prefix when we work on windows VS when its on the Server
+if platform.system() == 'Windows':
+    issueTrack = Blueprint('issueTrack', __name__, url_prefix='/', template_folder='templates',
                           static_folder='static')
-# This one will work for local testing
-# issueTrack = Blueprint('issueTrack', __name__, url_prefix='/', template_folder='templates', static_folder='static')
+else:
+    issueTrack = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates', static_folder='static')
 
 
 # do queries like this:
