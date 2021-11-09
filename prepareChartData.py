@@ -78,7 +78,7 @@ def mySubmittedTickets(user):
 
     # pull the list of issues and the list of statuses
     statusOptions = return_query("SELECT Type FROM Status")
-    ticketList = return_query("SELECT issue_status FROM Issues WHERE user_submitted_by = ?", (user,))
+    ticketList = return_query("SELECT issue_status FROM Issues WHERE submitter_id = ?", (user,))
 
     numTicketsByStatus = tableCounter(statusOptions, ticketList)
 
@@ -145,8 +145,11 @@ def tableCounter(keys, tableToCount):
     if tableToCount:
         tableToCountKey = list(tableToCount[0].keys())[0]
         for row in range(len(tableToCount)):
-            status = tableToCount[row][tableToCountKey]
-            dictionary[status] += 1
+            try:
+                status = tableToCount[row][tableToCountKey]
+                dictionary[status] += 1
+            except:
+                pass
 
     return dictionary
 

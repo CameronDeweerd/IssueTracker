@@ -11,7 +11,7 @@ Submit Tickets
         <form method="post">
             <div class="form-group">
                 Category: <select id="category" name="category">
-                    <option value="default" hidden>Select an Option</option>
+                    <option value="" selected disabled>Select an Option</option>
                     {% for i in category %}
                     <option value={{i.category}}>{{i.category}}</option>
                     {% endfor %}
