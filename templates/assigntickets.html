@@ -7,7 +7,7 @@ Assign Ticket
 {% block main %}
 <div class="mt-sm-1">
     <div class='justify-content-center align-items-center'>
-        <p class='h1'>Assign Ticket</p>
+        <p class='h1'>Assign New Ticket</p>
     </div>
     <table class="table table-striped table-hover" id='table1'>
         <thead>
@@ -23,7 +23,7 @@ Assign Ticket
             </tr>
         </thead>
         <tbody>
-            {% for i in tickets %}
+            {% for i in newtickets %}
             <tr id="ticket_{{i.id}}">
                 <td>{{ i.issue_id }}</td>
                 <td>{{ i.issue_category }}</td>
@@ -33,7 +33,7 @@ Assign Ticket
                 <td>{{ i.date_created }}</td>
                 <td>{{ i.issue_status }}</td>
                 <td>
-                    <form action="{{ url_for('.assigntickets') }}" method="post">
+                    <form class="form-inline" action="{{ url_for('.assigntickets') }}" method="post">
                         <input type="text" name='issueID' value='{{ i.issue_id }}' hidden>
                         <label for="select{{ i.issue_id }}"></label>
                         <select name="people" id="select{{ i.issue_id }}">
@@ -50,6 +50,51 @@ Assign Ticket
         </tbody>
     </table>
 </div>
+<div class='justify-content-center align-items-center'>
+        <p class='h1'>Re-Assign Ticket</p>
+    </div>
+    <table class="table table-striped table-hover" id='table2'>
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">ID</th>
+                <th onclick='sortTable(1)'>Category</th>
+                <th onclick='sortTable(2)'>Subject</th>
+                <th onclick='sortTable(3)'>Description</th>
+                <th onclick='sortTable(4)'>Assigned To</th>
+                <th onclick='sortTable(5)'>Date Created</th>
+                <th onclick='sortTable(6)'>Status</th>
+                <th>Assign Ticket</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for j in oldtickets %}
+            <tr id="newticket_{{j.id}}">
+                <td>{{ j.issue_id }}</td>
+                <td>{{ j.issue_category }}</td>
+                <td>{{ j.issue_subject }}</td>
+                <td>{{ j.issue_description }}</td>
+                <td>{{ j.user_assigned_to }}</td>
+                <td>{{ j.date_created }}</td>
+                <td>{{ j.issue_status }}</td>
+                <td>
+                    <form class="form-inline" action="{{ url_for('.assigntickets') }}" method="post">
+                        <input type="text" name='issueID' value='{{ j.issue_id }}' hidden>
+                        <label for="select{{ j.issue_id }}"></label>
+                        <select name="people" id="select{{ j.issue_id }}">
+                            <option value="">--Please Choose User--</option>
+                            {% for user in users %}
+                            <option value="{{ user.Username }}">{{ user.Username }}, {{ user.Access }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type='submit' class='btn btn-primary'>Re-Assign</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 {% endblock %}
 {% block script %}
 {% endblock %}

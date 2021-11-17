@@ -278,11 +278,10 @@ def assigntickets():
         return redirect(url_for(".dashboard"))
     else:
         if check_permission('FullAccess'):
-            tickets = return_query("SELECT * FROM Issues WHERE NOT issue_status = ?", ("Closed",))
-        else:
-            tickets = return_query("SELECT * FROM Issues WHERE issue_status = ?", ("unassigned",))
+            oldtickets = return_query("SELECT * FROM Issues WHERE NOT (issue_status = ? OR issue_status = ?)", ("Closed","unassigned"))
+        newtickets = return_query("SELECT * FROM Issues WHERE issue_status = ?", ("unassigned",))
         users = return_query("SELECT Username, Access FROM Users")
-        return render_template("assigntickets.html", tickets=tickets, users=users)
+        return render_template("assigntickets.html", oldtickets=oldtickets, newtickets=newtickets, users=users)
 
 
 @issueTrack.route('/profile')

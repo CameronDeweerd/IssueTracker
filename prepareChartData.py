@@ -8,11 +8,9 @@ def myTicketStatus(user):
     statusOptions = return_query("SELECT Type FROM Status")
     if check_permission('CanViewUnassigned'):
         ticketList = return_query("SELECT issue_status FROM Issues WHERE user_assigned_to = Null OR user_assigned_to = ?", (user,))
-        print('unassigned')
     else:
         print(user)
         ticketList = return_query('SELECT issue_status FROM Issues WHERE user_assigned_to = ?', (user,))
-        print("assigned")
 
     numTicketsByStatus = tableCounter(statusOptions, ticketList)
 
@@ -105,7 +103,8 @@ def mySubmittedTickets(user):
 '''# of open tickets each employee currently has'''
 def workloadBreakdown():
     # pull the list of issues and the list of categories
-    userList = return_query("SELECT Username FROM Users")
+    userList = return_query("SELECT Username FROM Users WHERE NOT Access = 'submitter'")
+
     ticketList = return_query("SELECT user_assigned_to FROM Issues WHERE NOT issue_status = 'Closed' AND NOT issue_status = 'unassigned'")
 
     print(ticketList)
