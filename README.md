@@ -37,3 +37,5 @@ tasks.
 The Issue Tracker was created using a Python (Flask) backend with an HTML, CSS, JS frontend and an SQLite database.
 These were chosen as they were the languages we both confidently knew. This allowed us to collaborate better and ensured
 we could easily discuss any changes we made and that either one of us could handle each element of the project.
+
+![alt text](https://github.com/CameronDeweerd/IssueTracker/blob/main/IssueTrackerDashboard.JPG?raw=true)
