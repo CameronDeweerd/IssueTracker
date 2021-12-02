@@ -2,12 +2,14 @@
 from SQLhelpers import return_query, check_permission
 
 '''# of current user's tickets per status'''
-def myTicketStatus(user):
 
+
+def myTicketStatus(user):
     # pull the list of issues and the list of statuses
     statusOptions = return_query("SELECT Type FROM Status")
     if check_permission('CanViewUnassigned'):
-        ticketList = return_query("SELECT issue_status FROM Issues WHERE user_assigned_to = Null OR user_assigned_to = ?", (user,))
+        ticketList = return_query(
+            "SELECT issue_status FROM Issues WHERE user_assigned_to = Null OR user_assigned_to = ?", (user,))
     else:
         print(user)
         ticketList = return_query('SELECT issue_status FROM Issues WHERE user_assigned_to = ?', (user,))
@@ -36,6 +38,8 @@ def myTicketStatus(user):
 
 
 '''# of open tickets per category'''
+
+
 def openIssuesByCategory(user=''):
     print("open Issues by Category")
     # pull the list of issues and the list of categories
@@ -65,15 +69,17 @@ def openIssuesByCategory(user=''):
     return jsonData
 
 
-
 '''bucket display of closed tickets (completion date - creation date)'''
+
+
 def ticketTurnaroundTime():
     return
 
 
 '''Count of tickets submitted by the current user and their status'''
-def mySubmittedTickets(user):
 
+
+def mySubmittedTickets(user):
     # pull the list of issues and the list of statuses
     statusOptions = return_query("SELECT Type FROM Status")
     ticketList = return_query("SELECT issue_status FROM Issues WHERE submitter_id = ?", (user,))
@@ -100,12 +106,16 @@ def mySubmittedTickets(user):
 
     return jsonData
 
+
 '''# of open tickets each employee currently has'''
+
+
 def workloadBreakdown():
     # pull the list of issues and the list of categories
     userList = return_query("SELECT Username FROM Users WHERE NOT Access = 'submitter'")
 
-    ticketList = return_query("SELECT user_assigned_to FROM Issues WHERE NOT issue_status = 'Closed' AND NOT issue_status = 'unassigned'")
+    ticketList = return_query(
+        "SELECT user_assigned_to FROM Issues WHERE NOT issue_status = 'Closed' AND NOT issue_status = 'unassigned'")
 
     print(ticketList)
 
@@ -133,6 +143,8 @@ def workloadBreakdown():
 
 
 '''given a 1 column key table and 1 column table of countables, return a dict of counted data'''
+
+
 def tableCounter(keys, tableToCount):
     dictionary = {}
     keysKey = list(keys[0].keys())[0]
@@ -169,7 +181,6 @@ def getDefaultOptions(title):
 
 
 def getColors(number):
-
     backgroundColor = [
         'rgba(255, 99, 132, 0.2)',
         'rgba(54, 162, 235, 0.2)',

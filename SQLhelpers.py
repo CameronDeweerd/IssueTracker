@@ -6,6 +6,7 @@ from flask import session, url_for
 path = os.path.dirname(os.path.abspath(__file__))
 db = os.path.join(path, './static/IssueTracker.db')
 
+
 def SQL_connect():
     # Connect to database todo don't know if checksamethread=false is bad practice
     # print(url_for(".static", filename='IssueTracker.db'))
@@ -60,7 +61,8 @@ def return_query(query, options=[]):
 
 
 def check_permission(permission):
-    value = return_query("SELECT * FROM Access WHERE Type = (SELECT Access FROM Users WHERE Username = ?)", (session['user_id'],))
+    value = return_query("SELECT * FROM Access WHERE Type = (SELECT Access FROM Users WHERE Username = ?)",
+                         (session['user_id'],))
     try:
         result = value[0][permission] == 1
         return result

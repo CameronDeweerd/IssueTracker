@@ -10,9 +10,10 @@ import prepareChartData
 # This will remove the prefix when we work on windows VS when its on the Server
 if platform.system() == 'Windows':
     issueTrack = Blueprint('issueTrack', __name__, url_prefix='/', template_folder='templates',
-                          static_folder='static')
+                           static_folder='static')
 else:
-    issueTrack = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates', static_folder='static')
+    issueTrack = Blueprint('issueTrack', __name__, url_prefix='/issue', template_folder='templates',
+                           static_folder='static')
 
 
 # do queries like this:
@@ -95,7 +96,7 @@ def register():
             return render_template("register.html", warning=warning)
         # If all else is good
         execute_query("INSERT INTO Users (Username, Password, Access) Values (?, ?, ?)", (
-        request.form.get("usernameEntry"), generate_password_hash(request.form.get("passwordEntry")), "submitter"))
+            request.form.get("usernameEntry"), generate_password_hash(request.form.get("passwordEntry")), "submitter"))
         return redirect(url_for(".index"))
     else:
         return render_template("register.html")
@@ -195,12 +196,17 @@ def dashboard():
 @login_required
 def mytickets():
     if not request.args.get('id'):
-        closed_tickets = return_query("SELECT * FROM Issues WHERE user_assigned_to = ? AND issue_status = 'Closed'", (session['user_id'],))
+        closed_tickets = return_query("SELECT * FROM Issues WHERE user_assigned_to = ? AND issue_status = 'Closed'",
+                                      (session['user_id'],))
         # check to see if user has access to all tickets or should just display assigned
         if check_permission('CanAssignTickets'):
-            open_tickets = return_query("SELECT * FROM Issues WHERE (user_assigned_to = ? OR issue_status = 'unassigned') AND NOT issue_status = 'Closed'", (session['user_id'],))
+            open_tickets = return_query(
+                "SELECT * FROM Issues WHERE (user_assigned_to = ? OR issue_status = 'unassigned') AND NOT issue_status = 'Closed'",
+                (session['user_id'],))
         else:
-            open_tickets = return_query("SELECT * FROM Issues WHERE user_assigned_to = ? AND NOT issue_status = 'Closed'", (session['user_id'],))
+            open_tickets = return_query(
+                "SELECT * FROM Issues WHERE user_assigned_to = ? AND NOT issue_status = 'Closed'",
+                (session['user_id'],))
         return render_template('mytickets.html', open_tickets=open_tickets, closed_tickets=closed_tickets)
     else:
         if request.method == "GET":
@@ -217,7 +223,8 @@ def mytickets():
             else:
                 canUpdate = 0
 
-            return render_template('ticketupdate.html', canUpdate=canUpdate, activityData=activityData, ticketData=ticketData[0],
+            return render_template('ticketupdate.html', canUpdate=canUpdate, activityData=activityData,
+                                   ticketData=ticketData[0],
                                    statusOptions=statusOptions)
         elif request.method == "POST":
             '''This is triggered when activity is submitted on a specific ticket'''
@@ -269,7 +276,8 @@ def assigntickets():
         issueID = request.form.get("issueID")
         person = request.form.get("people")
         if person:
-            execute_query("UPDATE Issues SET user_assigned_to = ?, issue_status = ? WHERE issue_id = ?", (person, "Open", issueID))
+            execute_query("UPDATE Issues SET user_assigned_to = ?, issue_status = ? WHERE issue_id = ?",
+                          (person, "Open", issueID))
             query = ("INSERT INTO Activity \
                     (issue_id, activity_description, user_id, activity_date) VALUES (?, ?, ?, ?)")
             parameters = (issueID, f"Assigned to {person}", session['user_id'], datetime.now().date())
@@ -278,7 +286,8 @@ def assigntickets():
         return redirect(url_for(".dashboard"))
     else:
         if check_permission('FullAccess'):
-            oldtickets = return_query("SELECT * FROM Issues WHERE NOT (issue_status = ? OR issue_status = ?)", ("Closed","unassigned"))
+            oldtickets = return_query("SELECT * FROM Issues WHERE NOT (issue_status = ? OR issue_status = ?)",
+                                      ("Closed", "unassigned"))
         newtickets = return_query("SELECT * FROM Issues WHERE issue_status = ?", ("unassigned",))
         users = return_query("SELECT Username, Access FROM Users")
         return render_template("assigntickets.html", oldtickets=oldtickets, newtickets=newtickets, users=users)
